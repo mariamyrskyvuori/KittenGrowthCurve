@@ -17,5 +17,12 @@ $ cd KittenGrowthCurve
 $ cd sql
 $ sqlite3 kittenGrowthCurve.db
 $ sqlite> .read CreateTables.sql
+$ sqlite> .exit
 ```
 
+Käynnistä ohjelma
+```sh
+$ cd ..
+$ mvn clean package
+$ java -jar target/KittenGrowthCurve-1.0-SNAPSHOT.jar
+```

@@ -43,7 +43,7 @@ public class Litter {
         this.kittens = new ArrayList<>();
     }
 
-    Litter(String dam, String sire, String litterName, Date establishment, Date birth, Date delivery, int id) {
+    Litter(String dam, String sire, String litterName, String establishment, LocalDate birth, String delivery, int id) {
         
         
         /* 

@@ -489,7 +489,7 @@ public class UI {
             System.out.println("kitten.getWeightMap() - --- " + kitten.getWeightMap());
             Map<Integer, Integer> weightMap = new HashMap();
             kitten.getWeightMap().forEach((k, v) -> {
-                weightMap.put(getAge(litter.getBirth(), (LocalDate) k), (Integer) v);
+                weightMap.put(getAge(litter.getBirth(), (LocalDate)k) , (Integer) v);
             });
 
             weightCurve.put(kitten.getKittenName(), weightMap);
@@ -497,7 +497,7 @@ public class UI {
 
         // luodaan kaaviossa käytettävät x- ja y-akselit
         NumberAxis yAkseli = new NumberAxis(0, 2500, 100);
-        NumberAxis xAkseli = new NumberAxis(1, 98, 7);
+        NumberAxis xAkseli = new NumberAxis(0, 98, 7);
 
         // luodaan viivakaavio. Viivakaavion arvot annetaan numeroina
         // ja se käyttää aiemmin luotuja x- ja y-akseleita

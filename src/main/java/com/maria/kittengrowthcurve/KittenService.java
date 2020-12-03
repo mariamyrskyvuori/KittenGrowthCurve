@@ -34,21 +34,25 @@ public class KittenService {
                 String litterName = rs.getString("litterName");
                 String dam = rs.getString("dam");
                 String sire = rs.getString("sire");
-                LocalDate establishment = rs.getDate("establishment").toLocalDate();
-                LocalDate birth = rs.getDate("birth").toLocalDate();
-                LocalDate delivery = rs.getDate("delivery").toLocalDate();
+                String establishment = rs.getString("establishment");
+                String birth = rs.getString("birth");
+                String delivery = rs.getString("delivery");
+                
+                LocalDate birthDay = LocalDate.parse(birth);
+                LocalDate establishmentDay = LocalDate.parse(establishment);
+                LocalDate deliveryDay = LocalDate.parse(delivery);
 
                
                 
                 
-                Litter litter = new Litter(dam, sire, litterName, establishment, birth, delivery, id);
+                Litter litter = new Litter(dam, sire, litterName, establishmentDay, birthDay, deliveryDay, id);
                 litters.add(litter);
                 System.out.println("Name: " + litterName);
                 System.out.println("Dam: " + dam);
                 System.out.println("Sire: " + sire);
-                System.out.println("Establishment: " + establishment);
-                System.out.println("Birth " + birth);
-                System.out.println("Delivery " + delivery);
+                System.out.println("Establishment: " + establishmentDay);
+                System.out.println("Birth " + birthDay);
+                System.out.println("Delivery " + deliveryDay);
                 System.out.println();
             }
             rs.close();
@@ -178,10 +182,12 @@ public class KittenService {
             ResultSet rs = pstmt.executeQuery();
             HashMap<LocalDate, Integer> weightMap = new HashMap();
             while (rs.next()) {
-                LocalDate date = rs.getDate("date").toLocalDate();
+                String date = rs.getString("date");
                 Integer weight = rs.getInt("weight");
+                
+                LocalDate weightDay = LocalDate.parse(date);
 
-                weightMap.put(date, weight);
+                weightMap.put(weightDay, weight);
 
             }
             rs.close();

@@ -25,7 +25,7 @@ public class KittenTest {
     
     @BeforeEach
     public void setUp() {
-        kitten = new Kitten("Aino", "Naaras", "12:20", 950, "x", "x", 5);
+        kitten = new Kitten("Aino", "Naaras", "12:20", "x", "x", 5);
     }
     
     @AfterEach
@@ -56,13 +56,7 @@ public class KittenTest {
         assertEquals("12:20", kitten.getBirthTime());
     }
 
-    /**
-     * Test of getWeight method, of class Kitten.
-     */
-    @Test
-    public void testGetWeight() {
-        assertEquals(950, kitten.getWeight());
-    }
+    
 
     /**
      * Test of getRegno method, of class Kitten.

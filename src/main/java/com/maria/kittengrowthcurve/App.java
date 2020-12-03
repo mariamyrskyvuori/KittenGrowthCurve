@@ -22,8 +22,8 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         stage.setTitle("Kasvukäyrä");
         UI ui = new UI(stage);
-        stage.setWidth(800);
-        stage.setHeight(720);
+        stage.setWidth(1024);
+        stage.setHeight(768);
         ui.start();
     }
 

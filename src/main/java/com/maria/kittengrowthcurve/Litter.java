@@ -6,7 +6,6 @@
 package com.maria.kittengrowthcurve;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -25,11 +24,11 @@ public class Litter {
     private int id;
     private ArrayList<Kitten> kittens;
 
-    Litter(String dam, String sire, String litterName, String establishmentDate) {
+    Litter(String dam, String sire, String litterName, LocalDate establishmentDate) {
         this.dam = dam;
         this.sire = sire;
         this.litterName = litterName;
-        this.establishmentDate = LocalDate.parse(establishmentDate, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        this.establishmentDate = establishmentDate;
         this.kittens = new ArrayList<>();
     }
 
@@ -42,6 +41,21 @@ public class Litter {
         this.birth = birth;
         this.deliveryDate = deliveryDate;
         this.kittens = new ArrayList<>();
+    }
+
+    Litter(String dam, String sire, String litterName, Date establishment, Date birth, Date delivery, int id) {
+        
+        
+        /* 
+                Record r = new Record();
+                LocalDate date = new Date(1967, 06, 22);
+                r.setDateOfBirth(new Date(date));
+                LocalDate locald = LocalDate.of(1967, 06, 22);
+                Date date = Date.valueOf(locald); // Magic happens here!
+                r.setDateOfBirth(date);
+                
+                Date date = r.getDate();
+                LocalDate localD = date.toLocalDate();*/
     }
 
     public ArrayList<Kitten> getKittens() {
@@ -58,7 +72,6 @@ public class Litter {
 
     // laskee mahdollisen synnytyspäivän ja sen mukaan luovutusajankohdan
     public void calculateDates() {
-
         birth = establishmentDate.plusDays(66L);
         deliveryDate = birth.plusDays(98L);
     }

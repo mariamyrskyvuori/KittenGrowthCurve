@@ -6,6 +6,7 @@
 package com.maria.kittengrowthcurve;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -17,27 +18,36 @@ public class Kitten {
     private String kittenName;
     private String sex;
     private String birthTime; //muuta kellonajaksi
-    private int weight; //pitäisikö olla lista tai hashmap?
     private String regno;
     private String ems;
     private int litterId;
-    HashMap<String, String> weighMap = new HashMap<String, String>();
+    private int id;
+    HashMap<LocalDate, Integer> weightMap = new HashMap<LocalDate, Integer>();
     
-    Kitten(String kittenName, String sex, String birthTime, int weight) {
+    Kitten(String kittenName, String sex, String birthTime) {
         this.kittenName = kittenName;
         this.sex = sex;
         this.birthTime = birthTime;
-        this.weight = weight;
+        
     }
     
-    Kitten(String kittenName, String sex, String birthTime, int weight, String regno, String ems, int litterId){
+    Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId){
         this.litterId = litterId;
         this.kittenName = kittenName;
         this.sex = sex;
         this.birthTime = birthTime;
-        this.weight = weight;
         this.regno = regno;
-        this.ems = ems;
+        this.ems = ems;   
+    }
+    
+    Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId, int kittenId){
+        this.id = kittenId;
+        this.litterId = litterId;
+        this.kittenName = kittenName;
+        this.sex = sex;
+        this.birthTime = birthTime;
+        this.regno = regno;
+        this.ems = ems;   
     }
 
     public String getKittenName() {
@@ -52,10 +62,6 @@ public class Kitten {
         return birthTime;
     }
 
-    public int getWeight() {
-        return weight;
-    }
-
     public String getRegno() {
         return regno;
     }
@@ -67,10 +73,16 @@ public class Kitten {
     int getLitterId() {
         return litterId;
     }
-    
-    public HashMap weighKitten(String weighDate, int weigh){
-        return weighMap;
+ 
+    public HashMap getWeightMap(){
+        return weightMap;
     }
-    
-    
+
+    Integer getId() {
+        return id;
+    }
+
+    public void setWeightMap(HashMap<LocalDate, Integer> weightMap) {
+        this.weightMap = weightMap;
+    }
 }

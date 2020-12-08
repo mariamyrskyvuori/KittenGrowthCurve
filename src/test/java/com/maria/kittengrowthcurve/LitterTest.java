@@ -5,6 +5,7 @@
  */
 package com.maria.kittengrowthcurve;
 
+import com.maria.kittengrowthcurve.domain.Litter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;

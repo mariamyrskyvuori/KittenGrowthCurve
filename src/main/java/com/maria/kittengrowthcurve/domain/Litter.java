@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.maria.kittengrowthcurve;
+package com.maria.kittengrowthcurve.domain;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class Litter {
     private int id;
     private ArrayList<Kitten> kittens;
 
-    Litter(String dam, String sire, String litterName, LocalDate establishmentDate) {
+    public Litter(String dam, String sire, String litterName, LocalDate establishmentDate) {
         this.dam = dam;
         this.sire = sire;
         this.litterName = litterName;
@@ -32,7 +32,7 @@ public class Litter {
         this.kittens = new ArrayList<>();
     }
 
-    Litter(String dam, String sire, String litterName, LocalDate establishmentDate, LocalDate birth, LocalDate deliveryDate, int id) {
+    public Litter(String dam, String sire, String litterName, LocalDate establishmentDate, LocalDate birth, LocalDate deliveryDate, int id) {
         this.id = id;
         this.dam = dam;
         this.sire = sire;
@@ -43,7 +43,7 @@ public class Litter {
         this.kittens = new ArrayList<>();
     }
 
-    Litter(String dam, String sire, String litterName, String establishment, LocalDate birth, String delivery, int id) {
+    public Litter(String dam, String sire, String litterName, String establishment, LocalDate birth, String delivery, int id) {
         
         
         /* 

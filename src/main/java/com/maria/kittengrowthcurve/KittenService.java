@@ -1,10 +1,14 @@
 package com.maria.kittengrowthcurve;
 
+import com.maria.kittengrowthcurve.domain.Kitten;
+import com.maria.kittengrowthcurve.domain.Litter;
+import com.maria.kittengrowthcurve.domain.Weight;
 import java.util.ArrayList;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import javafx.scene.text.Text;
 
 /**
@@ -17,7 +21,7 @@ public class KittenService {
     }
 
     //Luo pentueolion ja kutsuu metodia, joka laittaa sen kantaan
-    boolean addLitter(String dam, String sire, String litterName, LocalDate establishmentDate) {
+    public boolean addLitter(String dam, String sire, String litterName, LocalDate establishmentDate) {
         Litter litter = new Litter(dam, sire, litterName, establishmentDate);
         litter.calculateDates();
         return addLitterToDb(litter);
@@ -41,10 +45,6 @@ public class KittenService {
                 LocalDate birthDay = LocalDate.parse(birth);
                 LocalDate establishmentDay = LocalDate.parse(establishment);
                 LocalDate deliveryDay = LocalDate.parse(delivery);
-
-               
-                
-                
                 Litter litter = new Litter(dam, sire, litterName, establishmentDay, birthDay, deliveryDay, id);
                 litters.add(litter);
             }
@@ -160,25 +160,25 @@ public class KittenService {
         }
     }
 
-    HashMap<LocalDate, Integer> getKittenWeigthsByKittenId(int kittenId) {
+    ArrayList<Weight> getKittenWeightsByKittenId(int kittenId) {
         String sql = "SELECT * FROM Weight WHERE kitten_id = ?";
         try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, kittenId);
             ResultSet rs = pstmt.executeQuery();
-            HashMap<LocalDate, Integer> weightMap = new HashMap();
+            ArrayList<Weight> weightList = new ArrayList<>();
             while (rs.next()) {
                 String date = rs.getString("date");
                 Integer weight = rs.getInt("weight");
+                Integer id = rs.getInt("id");
                 
-                LocalDate weightDay = LocalDate.parse(date);
-
-                weightMap.put(weightDay, weight);
-
+                Weight weightObject = new Weight(id, LocalDate.parse(date), weight);
+                
+                weightList.add(weightObject);
             }
             rs.close();
             pstmt.close();
             conn.close();
-            return weightMap;
+            return weightList;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
@@ -203,13 +203,11 @@ public class KittenService {
         }
     }
     
-    public Boolean removeWeight(int kittenId, LocalDate date) {
+    public Boolean removeWeight(int weightId) {
         
-        String sql = "DELETE FROM Weight WHERE kitten_id = ? AND date = ?";
+        String sql = "DELETE FROM Weight WHERE id = ?";
         try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            //Class.forName("org.sqlite.JDBC");
-            pstmt.setInt(1, kittenId);
-            pstmt.setString(2, date.toString());
+            pstmt.setInt(1, weightId);
 
             pstmt.executeUpdate();
             conn.close();

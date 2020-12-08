@@ -62,8 +62,11 @@ public class DatePickerFormField {
     }
 
     public LocalDate getValue() {
-        return field.getValue();
+        // Java fx DatePickerin bugi. Siksi date otetaan tekstistä.
+        return field.getConverter().fromString(field.getEditor().getText());
     }
+    
+    
 
     public void clear() {
         field.setValue(null);

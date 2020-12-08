@@ -3,11 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.maria.kittengrowthcurve;
+package com.maria.kittengrowthcurve.domain;
 
+import com.maria.kittengrowthcurve.domain.Weight;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -17,21 +20,21 @@ public class Kitten {
     
     private String kittenName;
     private String sex;
-    private String birthTime; //muuta kellonajaksi
+    private String birthTime;
     private String regno;
     private String ems;
     private int litterId;
     private int id;
-    HashMap<LocalDate, Integer> weightMap = new HashMap<LocalDate, Integer>();
+    ArrayList<Weight> weightList = new ArrayList<>();
     
-    Kitten(String kittenName, String sex, String birthTime) {
+    public Kitten(String kittenName, String sex, String birthTime) {
         this.kittenName = kittenName;
         this.sex = sex;
         this.birthTime = birthTime;
         
     }
     
-    Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId){
+    public Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId){
         this.litterId = litterId;
         this.kittenName = kittenName;
         this.sex = sex;
@@ -40,7 +43,7 @@ public class Kitten {
         this.ems = ems;   
     }
     
-    Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId, int kittenId){
+    public Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId, int kittenId){
         this.id = kittenId;
         this.litterId = litterId;
         this.kittenName = kittenName;
@@ -70,19 +73,19 @@ public class Kitten {
         return ems;
     }
 
-    int getLitterId() {
+    public int getLitterId() {
         return litterId;
     }
  
-    public HashMap getWeightMap(){
-        return weightMap;
+    public ArrayList<Weight> getWeightList(){
+        return weightList;
     }
 
-    Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setWeightMap(HashMap<LocalDate, Integer> weightMap) {
-        this.weightMap = weightMap;
+    public void setWeightList(ArrayList<Weight> weightList) {
+        this.weightList = weightList;
     }
 }

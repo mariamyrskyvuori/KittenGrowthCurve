@@ -5,6 +5,9 @@
  */
 package com.maria.kittengrowthcurve;
 
+import com.maria.kittengrowthcurve.domain.Kitten;
+import com.maria.kittengrowthcurve.domain.Litter;
+import com.maria.kittengrowthcurve.domain.Weight;
 import com.maria.kittengrowthcurve.formfields.ComboBoxFormField;
 import com.maria.kittengrowthcurve.formfields.DatePickerFormField;
 import com.maria.kittengrowthcurve.formfields.TextFormField;
@@ -85,19 +88,10 @@ public class UI {
         for (Litter litter : littersFromDb) {
             ArrayList<Kitten> kittens = service.getKittensByLitterId(litter.getId());
             for (int i = 0; i < kittens.size(); i++) {
-                HashMap<LocalDate, Integer> weightMap = service.getKittenWeigthsByKittenId(kittens.get(i).getId());
-                kittens.get(i).setWeightMap(weightMap);
+                ArrayList<Weight> weightList = service.getKittenWeightsByKittenId(kittens.get(i).getId());
+                kittens.get(i).setWeightList(weightList);
             }
             litter.setKittens(kittens);
-            /*
-            for (Kitten kitten : kittens) {
-                HashMap<LocalDate, Integer> weightMap = service.getKittenWeigthsByKittenId(kitten.getId());
-                System.out.println("weightMap = " + weightMap);
-                System.out.println("kitten.getId() " + kitten.getId());
-                
-                kitten.setWeightMap(weightMap);
-            }*/
-
         }
 
         ComboBox<Litter> comboBox = new ComboBox<>();
@@ -452,9 +446,9 @@ public class UI {
     private Scene getWeightKittenScene(Kitten kitten) {
         Label kittenName = new Label(kitten.getKittenName());
         kittenName.setFont(Font.font("Arial", FontWeight.BOLD, 15));
-        BorderPane addWeight = new BorderPane();
+        BorderPane handleWeightsPane = new BorderPane();
         GridPane addWeightLayout = new GridPane();
-        Scene addWeightKittenScene = new Scene(addWeight);
+        Scene addWeightKittenScene = new Scene(handleWeightsPane);
 
         TextFormField weigthField = new TextFormField("Paino", true);
         DatePickerFormField dateField = new DatePickerFormField("Päivämäärä", true);
@@ -474,13 +468,13 @@ public class UI {
         Button saveWeight = new Button("Tallenna");
         addWeightLayout.add(saveWeight, 2, 1);
 
-        addWeight.setTop(addWeightLayout);
+        handleWeightsPane.setTop(addWeightLayout);
 
-        addWeight.setCenter(getAllWeightsForKittenLayout(-1, kitten.getWeightMap()));
+        handleWeightsPane.setCenter(getAllWeightsForKittenLayout(kitten.getId(), kitten.getWeightList(), handleWeightsPane));
 
         Button backKitten = new Button("Takaisin");
-        addWeight.setBottom(backKitten);
-        addWeight.setMargin(backKitten, new Insets(20, 30, 10, 30));
+        handleWeightsPane.setBottom(backKitten);
+        handleWeightsPane.setMargin(backKitten, new Insets(20, 30, 10, 30));
 
         //addWeightLayout.add(backKitten, 3, 1);
         backKitten.setOnMouseClicked((event) -> {
@@ -488,18 +482,22 @@ public class UI {
         });
 
         saveWeight.setOnMouseClicked((event) -> {
-            int weight = Integer.valueOf(weigthField.getValue());
-            LocalDate date = dateField.getValue();
-            boolean weightAddSuccessfull = service.addWeight(kitten.getId(), weight, date);
-            if (weightAddSuccessfull) {
-                addWeight.setCenter(getAllWeightsForKittenLayout(kitten.getId(), null));
-                feedback.setText("Paino lisätty!");
+            boolean isWeightValid = weigthField.isValid();
+            boolean isDateValid = dateField.isValid();
+            if (isWeightValid && isDateValid) {
+                int weight = Integer.valueOf(weigthField.getValue());
+                LocalDate date = dateField.getValue();
+                boolean weightAddSuccessfull = service.addWeight(kitten.getId(), weight, date);
+                if (weightAddSuccessfull) {
+                    handleWeightsPane.setCenter(getAllWeightsForKittenLayout(kitten.getId(), null, handleWeightsPane));
+                    feedback.setText("Paino lisätty!");
 
-                dateField.clear();
-                weigthField.clear();
+                    dateField.clear();
+                    weigthField.clear();
 
-            } else {
-                feedback.setText("Ei onnistunut!");
+                } else {
+                    feedback.setText("Ei onnistunut!");
+                }
             }
         });
 
@@ -508,65 +506,40 @@ public class UI {
     }
 
     //Listaa pennun kaikki painot. tarvitaan painojen muokkaamiseen.
-    private Node getAllWeightsForKittenLayout(int kittenId, HashMap<LocalDate, Integer> weightMap) {
-        if (weightMap == null) {
-            weightMap = service.getKittenWeigthsByKittenId(kittenId);
+    private Node getAllWeightsForKittenLayout(Integer kittenId, ArrayList<Weight> weightList, BorderPane handleWeightsPane) {
+        if (weightList == null) {
+            weightList = service.getKittenWeightsByKittenId(kittenId);
         }
-       
-        FlowPane weightsOfKitten = new FlowPane(Orientation.VERTICAL,
-                20.0, 20.0);
+
+        FlowPane weightsOfKitten = new FlowPane(Orientation.VERTICAL, 20.0, 20.0);
         weightsOfKitten.setPadding(new Insets(20, 30, 10, 30));
 
-        final ArrayList<Entry<LocalDate, Integer>> weightsArray = new ArrayList<>();
+        weightList.sort(Comparator.comparing(Weight::getDate));
 
-        weightMap.entrySet().stream().forEach(item -> {
-            weightsArray.add(item);
-        });
-
-        weightsArray.sort(Comparator.comparing(Entry::getKey));
-
-        
-        
-        for (Entry<LocalDate, Integer> entry : weightsArray) {
+        for (Weight weight : weightList) {
             GridPane allWeights = new GridPane();
             allWeights.setHgap(10);
             allWeights.getColumnConstraints().add(new ColumnConstraints(80));
             allWeights.getColumnConstraints().add(new ColumnConstraints(40));
-            Text date = new Text(entry.getKey().toString());
-            Text weight = new Text(entry.getValue().toString());
+            Text date = new Text(weight.getDate().toString());
+            Text weightField = new Text("" + weight.getWeight());
             Button mode = new Button("Poista");
             mode.setOnMouseClicked((event) -> {
                 //Poista kannasta valittu punnitustapahtuma.
-                 service.removeWeight(kittenId, entry.getKey());
+                service.removeWeight(weight.getId());
+                handleWeightsPane.setCenter(getAllWeightsForKittenLayout(kittenId, null, handleWeightsPane));
             });
 
             allWeights.add(date, 0, 0);
-            allWeights.add(weight, 1, 0);
+            allWeights.add(weightField, 1, 0);
             allWeights.add(mode, 2, 0);
             weightsOfKitten.getChildren().add(allWeights);
         }
-        /*
-        weightMap.entrySet().stream().forEach(pari -> {
-            GridPane allWeights = new GridPane();
-            allWeights.setHgap(10);
-            allWeights.getColumnConstraints().add(new ColumnConstraints(100));
-            allWeights.getColumnConstraints().add(new ColumnConstraints(60));
-            Text date = new Text(pari.getKey().toString());
-            Text weight = new Text(pari.getValue().toString());
-            Button mode = new Button("Muokkaa");
-            
-            allWeights.add(date, 0, 0);
-            allWeights.add(weight, 1, 0);
-            allWeights.add(mode, 2, 0);
-            weightsOfKitten.getChildren().add(allWeights);
-            
-        });*/
         return weightsOfKitten;
     }
 
     //laskee pennun iän päivinä. tarvitaan viivakaaviossa ja päiväkirjassa.
     private int getAge(LocalDate birthDate, LocalDate weighDate) {
-
         return (int) ChronoUnit.DAYS.between(birthDate, weighDate);
     }
 
@@ -575,9 +548,9 @@ public class UI {
         Map<String, Map<Integer, Integer>> weightCurve = new HashMap();
         for (Kitten kitten : litter.getKittens()) {
             Map<Integer, Integer> weightMap = new HashMap();
-            kitten.getWeightMap().forEach((k, v) -> {
-                weightMap.put(getAge(litter.getBirth(), (LocalDate) k), (Integer) v);
-            });
+            for (Weight weight : kitten.getWeightList()) {
+                weightMap.put(getAge(litter.getBirth(), weight.getDate()), weight.getWeight());
+            }
 
             weightCurve.put(kitten.getKittenName(), weightMap);
         }

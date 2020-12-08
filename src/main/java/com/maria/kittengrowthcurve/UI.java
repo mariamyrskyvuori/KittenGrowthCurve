@@ -5,13 +5,17 @@
  */
 package com.maria.kittengrowthcurve;
 
+import com.maria.kittengrowthcurve.formfields.ComboBoxFormField;
+import com.maria.kittengrowthcurve.formfields.DatePickerFormField;
+import com.maria.kittengrowthcurve.formfields.TextFormField;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -24,6 +28,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -32,6 +37,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.text.FontWeight;
@@ -78,11 +84,19 @@ public class UI {
         ArrayList<Litter> littersFromDb = service.getLitters();
         for (Litter litter : littersFromDb) {
             ArrayList<Kitten> kittens = service.getKittensByLitterId(litter.getId());
+            for (int i = 0; i < kittens.size(); i++) {
+                HashMap<LocalDate, Integer> weightMap = service.getKittenWeigthsByKittenId(kittens.get(i).getId());
+                kittens.get(i).setWeightMap(weightMap);
+            }
             litter.setKittens(kittens);
+            /*
             for (Kitten kitten : kittens) {
                 HashMap<LocalDate, Integer> weightMap = service.getKittenWeigthsByKittenId(kitten.getId());
+                System.out.println("weightMap = " + weightMap);
+                System.out.println("kitten.getId() " + kitten.getId());
+                
                 kitten.setWeightMap(weightMap);
-            }
+            }*/
 
         }
 
@@ -132,14 +146,10 @@ public class UI {
         Label pentue = new Label("Pentue");
         pentue.setFont(Font.font("Monospaced", 10));
 
-        Label damName = new Label("Emo");
-        TextField damField = new TextField();
-        Label sireName = new Label("Isä");
-        TextField sireField = new TextField();
-        Label name = new Label("Nimi");
-        TextField nameField = new TextField();
-        Label establishment = new Label("Astutuspäivä");
-        DatePicker establishmentField = new DatePicker();
+        TextFormField damField = new TextFormField("Emo", true);
+        TextFormField sireField = new TextFormField("Isä", true);
+        TextFormField nameField = new TextFormField("Nimi", true);
+        DatePickerFormField establishmentField = new DatePickerFormField("Astutuspäivä", true);
         Label feedback = new Label("");
 
         addLitterLayout.setAlignment(Pos.CENTER);
@@ -150,29 +160,34 @@ public class UI {
         Button save = new Button("Lisää pentue");
         Button back = new Button("Takaisin");
 
-        addLitterLayout.add(damName, 0, 0);
-        addLitterLayout.add(damField, 0, 1);
-        addLitterLayout.add(sireName, 1, 0);
-        addLitterLayout.add(sireField, 1, 1);
-        addLitterLayout.add(name, 0, 2);
-        addLitterLayout.add(nameField, 0, 3);
-        addLitterLayout.add(establishment, 1, 2);
-        addLitterLayout.add(establishmentField, 1, 3);
-        addLitterLayout.add(save, 2, 4);
+        addLitterLayout.add(damField.getNode(), 0, 0);
+        addLitterLayout.add(sireField.getNode(), 1, 0);
+        addLitterLayout.add(nameField.getNode(), 0, 1);
+        addLitterLayout.add(establishmentField.getNode(), 1, 1);
+        addLitterLayout.add(save, 1, 4);
         addLitterLayout.add(back, 0, 4);
-        addLitterLayout.add(feedback, 1, 4);
+        addLitterLayout.add(feedback, 1, 5);
 
         back.setOnMouseClicked((event) -> {
             stage.setScene(getInitialScene());
         });
 
         save.setOnMouseClicked((event) -> {
-            String dam = damField.getText();
-            String sire = sireField.getText();
-            String litterName = nameField.getText();
+            boolean isValidDamField = damField.isValid();
+            boolean isValidSireField = sireField.isValid();
+            boolean isValidNameField = nameField.isValid();
+            boolean isValidEstablishmentField = establishmentField.isValid();
+
+            String dam = damField.getValue();
+            String sire = sireField.getValue();
+            String litterName = nameField.getValue();
             LocalDate establishmentDate = establishmentField.getValue();
 
-            boolean litterAddSuccessfull = service.addLitter(dam, sire, litterName, establishmentDate);
+            boolean litterAddSuccessfull = false;
+
+            if (isValidDamField && isValidSireField && isValidNameField && isValidEstablishmentField) {
+                litterAddSuccessfull = service.addLitter(dam, sire, litterName, establishmentDate);
+            }
 
             if (litterAddSuccessfull) {
 
@@ -181,7 +196,7 @@ public class UI {
                 damField.clear();
                 sireField.clear();
                 nameField.clear();
-                establishmentField.setValue(null);
+                establishmentField.clear();
 
             } else {
                 feedback.setText("Ei onnistunut!");
@@ -204,22 +219,28 @@ public class UI {
         GridPane addKittenLayout = new GridPane();
         Scene addKittenScene = new Scene(addKittenLayout);
 
-        Label nameOfKitten = new Label("Nimi");
-        TextField kittenNameField = new TextField();
+        //Label nameOfKitten = new Label("Nimi");
+        TextFormField nameOfKittenField = new TextFormField("Nimi", true);
+        //TextField kittenNameField = new TextField();
 
-        Label sexOfKitten = new Label("Sukupuoli");
-        ComboBox<String> sexBox = new ComboBox<>();
-        sexBox.getItems().addAll("Uros", "Naaras");
+        //Label sexOfKitten = new Label("Sukupuoli");
+        ComboBoxFormField sexBox = new ComboBoxFormField("Sukupuoli", true);
+        sexBox.setItems("Uros", "Naaras");
+        //sexBox.getItems().addAll("Uros", "Naaras");
         sexBox.setPromptText("Valitse sukupuoli");
 
-        Label birthTimeOfKitten = new Label("Syntymäaika (klo)");
-        TextField birthTimeField = new TextField();
-        Label weigthOfKitten = new Label("Paino");
-        TextField weigthField = new TextField();
-        Label regNoOfKitten = new Label("Rekisterinumero");
-        TextField regNoField = new TextField("x");
-        Label emsCodeOfKitten = new Label("EMS-koodi");
-        TextField emsCodeField = new TextField("x");
+        //Label birthTimeOfKitten = new Label("Syntymäaika (klo)");
+        TextFormField birthTimeOfKittenField = new TextFormField("Syntymäaika (klo)", false);
+        //TextField birthTimeField = new TextField();
+        //Label weigthOfKitten = new Label("Paino");
+        TextFormField weightOfKittenField = new TextFormField("Paino", true);
+        //TextField weigthField = new TextField();
+        //Label regNoOfKitten = new Label("Rekisterinumero");
+        TextFormField regNoOfKittenField = new TextFormField("Rekisterinumero", false);
+        //TextField regNoField = new TextField("x");
+        //Label emsCodeOfKitten = new Label("EMS-koodi");
+        TextFormField emsCodeOfKittenField = new TextFormField("EMS-koodi", false);
+        //TextField emsCodeField = new TextField("x");
         Label feedbackKitten = new Label();
 
         addKittenLayout.setAlignment(Pos.CENTER);
@@ -230,43 +251,51 @@ public class UI {
         Button saveKitten = new Button("Lisää pentu");
         Button backKitten = new Button("Takaisin");
 
-        addKittenLayout.add(nameOfKitten, 0, 0);
-        addKittenLayout.add(kittenNameField, 0, 1);
-        addKittenLayout.add(sexOfKitten, 1, 0);
-        addKittenLayout.add(sexBox, 1, 1);
-        addKittenLayout.add(birthTimeOfKitten, 0, 2);
-        addKittenLayout.add(birthTimeField, 0, 3);
-        addKittenLayout.add(weigthOfKitten, 1, 2);
-        addKittenLayout.add(weigthField, 1, 3);
-        addKittenLayout.add(regNoOfKitten, 0, 4);
-        addKittenLayout.add(regNoField, 0, 5);
-        addKittenLayout.add(emsCodeOfKitten, 1, 4);
-        addKittenLayout.add(emsCodeField, 1, 5);
-        addKittenLayout.add(saveKitten, 2, 6);
-        addKittenLayout.add(backKitten, 0, 6);
-        addKittenLayout.add(feedbackKitten, 1, 6);
+        addKittenLayout.add(nameOfKittenField.getNode(), 0, 0);
+        //addKittenLayout.add(kittenNameField, 0, 1);
+        addKittenLayout.add(sexBox.getNode(), 1, 0);
+        //addKittenLayout.add(sexBox, 1, 1);
+        addKittenLayout.add(birthTimeOfKittenField.getNode(), 0, 1);
+        //addKittenLayout.add(birthTimeField, 0, 3);
+        addKittenLayout.add(weightOfKittenField.getNode(), 1, 1);
+        //addKittenLayout.add(weigthField, 1, 3);
+        addKittenLayout.add(regNoOfKittenField.getNode(), 0, 2);
+        //addKittenLayout.add(regNoField, 0, 5);
+        addKittenLayout.add(emsCodeOfKittenField.getNode(), 1, 2);
+        //addKittenLayout.add(emsCodeField, 1, 5);
+        addKittenLayout.add(saveKitten, 1, 3);
+        addKittenLayout.add(backKitten, 0, 3);
+        addKittenLayout.add(feedbackKitten, 0, 4);
 
         backKitten.setOnMouseClicked((event) -> {
             stage.setScene(getInitialScene());
         });
 
         saveKitten.setOnMouseClicked((event) -> {
-            String kittenName = kittenNameField.getText();
-            String sex = sexBox.getValue();
-            String birthTime = birthTimeField.getText();
-            String weigth = weigthField.getText();
-            String regNo = regNoField.getText();
-            String emsCode = emsCodeField.getText();
+            boolean isValidNameOfKittenField = nameOfKittenField.isValid();
+            boolean isValidsexBox = sexBox.isValid();
+            boolean isValidWeightOfKittenField = weightOfKittenField.isValid();
 
-            int kittenId = service.addKitten(litterId, kittenName, sex, birthTime, Integer.valueOf(weigth), regNo, emsCode, birth);
+            String kittenName = nameOfKittenField.getValue();
+            String sex = sexBox.getValue();
+            String birthTime = birthTimeOfKittenField.getValue();
+            String weigth = weightOfKittenField.getValue();
+            String regNo = regNoOfKittenField.getValue();
+            String emsCode = emsCodeOfKittenField.getValue();
+
+            int kittenId = -1;
+
+            if (isValidNameOfKittenField && isValidsexBox && isValidWeightOfKittenField) {
+                kittenId = service.addKitten(litterId, kittenName, sex, birthTime, Integer.valueOf(weigth), regNo, emsCode, birth);
+            }
 
             if (kittenId != -1) {
                 feedbackKitten.setText("Pentu lisätty!");
                 // ota weigth ja laita sen kantaan kittenId:llä service.add
-                kittenNameField.clear();
-                birthTimeField.clear();
-                weigthField.clear();
-
+                nameOfKittenField.clear();
+                birthTimeOfKittenField.clear();
+                weightOfKittenField.clear();
+                sexBox.clear();
             } else {
                 feedbackKitten.setText("Ei onnistunut!");
             }
@@ -373,16 +402,16 @@ public class UI {
 
         litterInfoLayout.setAlignment(Pos.TOP_LEFT);
 
-        
         BorderPane curve = new BorderPane();
         curve.setBottom(litterInfoLayout);
         curve.setLeft(back);
 
         return litterInfoLayout;
     }
+
     //Näkymä pentujen infosta
     private Node getKittenInfoLayout(Litter litter) {
-        ArrayList<Kitten> kittens = service.getKittensByLitterId(litter.getId());
+        ArrayList<Kitten> kittens = litter.getKittens();
         GridPane kittenInfoLayout = new GridPane();
         kittenInfoLayout.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         kittenInfoLayout.getColumnConstraints().add(new ColumnConstraints(120));
@@ -402,13 +431,13 @@ public class UI {
                 stage.setScene(getWeightKittenScene(kitten));
             });
 
-            ToggleButton show = new ToggleButton("ON/off");
+            ToggleButton show = new ToggleButton("piilota");
             kittenInfoLayout.add(show, 2, 1 + i);
             show.setOnMouseClicked((event) -> {
                 if (show.isSelected()) {
-                    show.setText("on/OFF");
+                    show.setText("näytä");
                 } else {
-                    show.setText("ON/off");
+                    show.setText("piilota");
                 }
 
             });
@@ -418,78 +447,136 @@ public class UI {
         kittenInfoLayout.setVgap(9);
         return kittenInfoLayout;
     }
-    //näkymä pentujen punnitsemiseen
+
+    //näkymä pentujen punnitsemiseen 
     private Scene getWeightKittenScene(Kitten kitten) {
-        
         Label kittenName = new Label(kitten.getKittenName());
         kittenName.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        BorderPane addWeight = new BorderPane();
         GridPane addWeightLayout = new GridPane();
-        Scene addWeightKittenScene = new Scene(addWeightLayout);
+        Scene addWeightKittenScene = new Scene(addWeight);
 
-        Label weigthOfKitten = new Label("Paino grammoina");
-        TextField weigthField = new TextField();
+        TextFormField weigthField = new TextFormField("Paino", true);
+        DatePickerFormField dateField = new DatePickerFormField("Päivämäärä", true);
 
-        Label dateOfWeight = new Label("Päivämäärä");
-        DatePicker dateField = new DatePicker();
-
-        Label feedbackWeight = new Label();
+        Label feedback = new Label("");
 
         addWeightLayout.add(kittenName, 0, 0);
-        addWeightLayout.add(weigthOfKitten, 0, 1);
-        addWeightLayout.add(weigthField, 0, 2);
-        addWeightLayout.add(dateOfWeight, 1, 1);
-        addWeightLayout.add(dateField, 1, 2);
-        addWeightLayout.add(feedbackWeight, 1, 6);
+        addWeightLayout.add(weigthField.getNode(), 1, 1);
+        addWeightLayout.add(dateField.getNode(), 0, 1);
+        addWeightLayout.add(feedback, 0, 2);
 
-        addWeightLayout.setAlignment(Pos.CENTER);
+        addWeightLayout.setAlignment(Pos.TOP_LEFT);
         addWeightLayout.setVgap(10);
         addWeightLayout.setHgap(10);
-        addWeightLayout.setPadding(new Insets(10, 10, 10, 10));
+        addWeightLayout.setPadding(new Insets(20, 30, 10, 30));
 
         Button saveWeight = new Button("Tallenna");
+        addWeightLayout.add(saveWeight, 2, 1);
+
+        addWeight.setTop(addWeightLayout);
+
+        addWeight.setCenter(getAllWeightsForKittenLayout(-1, kitten.getWeightMap()));
+
         Button backKitten = new Button("Takaisin");
+        addWeight.setBottom(backKitten);
+        addWeight.setMargin(backKitten, new Insets(20, 30, 10, 30));
 
-        addWeightLayout.add(saveWeight, 2, 6);
-        addWeightLayout.add(backKitten, 0, 6);
-
+        //addWeightLayout.add(backKitten, 3, 1);
         backKitten.setOnMouseClicked((event) -> {
             stage.setScene(getInitialScene());
         });
 
         saveWeight.setOnMouseClicked((event) -> {
-            int weight = Integer.valueOf(weigthField.getText());
+            int weight = Integer.valueOf(weigthField.getValue());
             LocalDate date = dateField.getValue();
             boolean weightAddSuccessfull = service.addWeight(kitten.getId(), weight, date);
             if (weightAddSuccessfull) {
+                addWeight.setCenter(getAllWeightsForKittenLayout(kitten.getId(), null));
+                feedback.setText("Paino lisätty!");
 
-                feedbackWeight.setText("Paino lisätty!");
-
-                dateField.setValue(null);
+                dateField.clear();
                 weigthField.clear();
 
             } else {
-                feedbackWeight.setText("Ei onnistunut!");
+                feedback.setText("Ei onnistunut!");
             }
         });
 
         return addWeightKittenScene;
 
     }
+
+    //Listaa pennun kaikki painot. tarvitaan painojen muokkaamiseen.
+    private Node getAllWeightsForKittenLayout(int kittenId, HashMap<LocalDate, Integer> weightMap) {
+        if (weightMap == null) {
+            weightMap = service.getKittenWeigthsByKittenId(kittenId);
+        }
+       
+        FlowPane weightsOfKitten = new FlowPane(Orientation.VERTICAL,
+                20.0, 20.0);
+        weightsOfKitten.setPadding(new Insets(20, 30, 10, 30));
+
+        final ArrayList<Entry<LocalDate, Integer>> weightsArray = new ArrayList<>();
+
+        weightMap.entrySet().stream().forEach(item -> {
+            weightsArray.add(item);
+        });
+
+        weightsArray.sort(Comparator.comparing(Entry::getKey));
+
+        
+        
+        for (Entry<LocalDate, Integer> entry : weightsArray) {
+            GridPane allWeights = new GridPane();
+            allWeights.setHgap(10);
+            allWeights.getColumnConstraints().add(new ColumnConstraints(80));
+            allWeights.getColumnConstraints().add(new ColumnConstraints(40));
+            Text date = new Text(entry.getKey().toString());
+            Text weight = new Text(entry.getValue().toString());
+            Button mode = new Button("Poista");
+            mode.setOnMouseClicked((event) -> {
+                //Poista kannasta valittu punnitustapahtuma.
+                 service.removeWeight(kittenId, entry.getKey());
+            });
+
+            allWeights.add(date, 0, 0);
+            allWeights.add(weight, 1, 0);
+            allWeights.add(mode, 2, 0);
+            weightsOfKitten.getChildren().add(allWeights);
+        }
+        /*
+        weightMap.entrySet().stream().forEach(pari -> {
+            GridPane allWeights = new GridPane();
+            allWeights.setHgap(10);
+            allWeights.getColumnConstraints().add(new ColumnConstraints(100));
+            allWeights.getColumnConstraints().add(new ColumnConstraints(60));
+            Text date = new Text(pari.getKey().toString());
+            Text weight = new Text(pari.getValue().toString());
+            Button mode = new Button("Muokkaa");
+            
+            allWeights.add(date, 0, 0);
+            allWeights.add(weight, 1, 0);
+            allWeights.add(mode, 2, 0);
+            weightsOfKitten.getChildren().add(allWeights);
+            
+        });*/
+        return weightsOfKitten;
+    }
+
     //laskee pennun iän päivinä. tarvitaan viivakaaviossa ja päiväkirjassa.
     private int getAge(LocalDate birthDate, LocalDate weighDate) {
-       
+
         return (int) ChronoUnit.DAYS.between(birthDate, weighDate);
     }
+
     //viivakaavio. ei näytä vielä painoja.
     private Node getWeightCurveLayout(Litter litter) {
-        System.out.println("getWeightCurveLayout metodissa");
         Map<String, Map<Integer, Integer>> weightCurve = new HashMap();
         for (Kitten kitten : litter.getKittens()) {
-            System.out.println("kittenssejä on");
-            System.out.println("kitten.getWeightMap() - --- " + kitten.getWeightMap());
             Map<Integer, Integer> weightMap = new HashMap();
             kitten.getWeightMap().forEach((k, v) -> {
-                weightMap.put(getAge(litter.getBirth(), (LocalDate)k) , (Integer) v);
+                weightMap.put(getAge(litter.getBirth(), (LocalDate) k), (Integer) v);
             });
 
             weightCurve.put(kitten.getKittenName(), weightMap);
@@ -510,11 +597,8 @@ public class UI {
             // jokaiselle pennulle luodaan oma datajoukko
             XYChart.Series data = new XYChart.Series();
             data.setName(kittenName);
-            System.out.println("kittenin nimi " + kittenName);
             // datajoukkoon lisätään pentujen datapisteet
             weightCurve.get(kittenName).entrySet().stream().forEach(pari -> {
-                System.out.println("kittenin ikä " + pari.getKey());
-                System.out.println("kittenin paino " + pari.getValue());
                 data.getData().add(new XYChart.Data(pari.getKey(), pari.getValue()));
             });
 

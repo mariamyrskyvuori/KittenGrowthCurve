@@ -47,13 +47,6 @@ public class KittenService {
                 
                 Litter litter = new Litter(dam, sire, litterName, establishmentDay, birthDay, deliveryDay, id);
                 litters.add(litter);
-                System.out.println("Name: " + litterName);
-                System.out.println("Dam: " + dam);
-                System.out.println("Sire: " + sire);
-                System.out.println("Establishment: " + establishmentDay);
-                System.out.println("Birth " + birthDay);
-                System.out.println("Delivery " + deliveryDay);
-                System.out.println();
             }
             rs.close();
             stmt.close();
@@ -128,7 +121,6 @@ public class KittenService {
             ResultSet rs = pstmt.getGeneratedKeys();
             int kittenId = -1;
             while (rs.next()) {
-                System.out.println("Result Set: " + rs.toString());
                 kittenId = rs.getInt(1);
             }
             conn.close();
@@ -157,13 +149,6 @@ public class KittenService {
 
                 Kitten kitten = new Kitten(kittenName, sex, birthTime, regno, ems, litterId, id);
                 kittens.add(kitten);
-                System.out.println("Id: " + id);
-                System.out.println("Nimi: " + kittenName);
-                System.out.println("Sukupuoli: " + sex);
-                System.out.println("Syntymäaika: " + birthTime);
-                System.out.println("RekNo: " + regno);
-                System.out.println("Väri: " + ems);
-                System.out.println();
             }
             rs.close();
             pstmt.close();
@@ -217,4 +202,24 @@ public class KittenService {
             return false;
         }
     }
+    
+    public Boolean removeWeight(int kittenId, LocalDate date) {
+        
+        String sql = "DELETE FROM Weight WHERE kitten_id = ? AND date = ?";
+        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            //Class.forName("org.sqlite.JDBC");
+            pstmt.setInt(1, kittenId);
+            pstmt.setString(2, date.toString());
+
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    
 }

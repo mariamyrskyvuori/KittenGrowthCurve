@@ -66,7 +66,9 @@ public class DatePickerFormField {
         return field.getConverter().fromString(field.getEditor().getText());
     }
     
-    
+    public void setValue(LocalDate value) {
+        field.setValue(value);
+    }
 
     public void clear() {
         field.setValue(null);

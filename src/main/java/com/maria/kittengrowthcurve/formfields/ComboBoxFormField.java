@@ -9,7 +9,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
@@ -70,6 +69,10 @@ public class ComboBoxFormField {
 
     public String getValue() {
         return field.getValue();
+    }
+    
+    public void setValue(String value) {
+        field.setValue(value);
     }
 
     public void setPromptText(String promptText) {

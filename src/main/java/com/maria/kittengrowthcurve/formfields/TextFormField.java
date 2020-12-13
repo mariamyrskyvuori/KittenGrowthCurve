@@ -68,4 +68,8 @@ public class TextFormField {
         field.clear();
         errorLabel.setText("");
     }
+    
+    public void setValue(String value) {
+        field.setText(value);
+    }
 }

@@ -6,10 +6,7 @@ import com.maria.kittengrowthcurve.domain.Weight;
 import java.util.ArrayList;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import javafx.scene.text.Text;
+import javafx.scene.control.TextArea;
 
 /**
  *
@@ -41,7 +38,7 @@ public class KittenService {
                 String establishment = rs.getString("establishment");
                 String birth = rs.getString("birth");
                 String delivery = rs.getString("delivery");
-                
+
                 LocalDate birthDay = LocalDate.parse(birth);
                 LocalDate establishmentDay = LocalDate.parse(establishment);
                 LocalDate deliveryDay = LocalDate.parse(delivery);
@@ -170,9 +167,9 @@ public class KittenService {
                 String date = rs.getString("date");
                 Integer weight = rs.getInt("weight");
                 Integer id = rs.getInt("id");
-                
+
                 Weight weightObject = new Weight(id, LocalDate.parse(date), weight);
-                
+
                 weightList.add(weightObject);
             }
             rs.close();
@@ -202,9 +199,9 @@ public class KittenService {
             return false;
         }
     }
-    
+
     public Boolean removeWeight(int weightId) {
-        
+
         String sql = "DELETE FROM Weight WHERE id = ?";
         try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, weightId);
@@ -218,6 +215,70 @@ public class KittenService {
             return false;
         }
     }
+
+    public int updateKitten(int kittenId, String kittenName, String sex, String birthTime, int weigth, String regno, String ems, LocalDate birth) {
+        String sql = "UPDATE Kitten SET name = ?, sex = ?,regNo = ?, emsCode= ?, birthTime = ? WHERE id = ?";
+
+        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            //Class.forName("org.sqlite.JDBC");
+            pstmt.setString(1, kittenName);
+            pstmt.setString(2, sex);
+            pstmt.setString(3, regno);
+            pstmt.setString(4, ems);
+            pstmt.setString(5, birthTime);
+            pstmt.setInt(6, kittenId);
+
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return kittenId;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return -2;
+        }
+        
+    }
+    //dam, sire, litterName, establishment, birth, delivery
     
-    
+    public boolean updateLitter(String dam, String sire, LocalDate establishmentDate, LocalDate birth, int id) {
+        String sql = "UPDATE Litter SET dam = ?, sire = ?, establishment = ?, birth = ? WHERE id = ?";
+
+        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            //Class.forName("org.sqlite.JDBC");
+            pstmt.setString(1, dam);
+            pstmt.setString(2, sire);
+            pstmt.setString(3, establishmentDate.toString());
+            pstmt.setString(4, birth.toString());
+            pstmt.setInt(5, id);
+            
+
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        
+    }
+
+    public boolean updateDiary(int id, LocalDate diaryDate, TextArea diaryText) {
+        String sql = "INSERT INTO Diary(litter_id, date, text) VALUES(?,?,?)";
+        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            //Class.forName("org.sqlite.JDBC");
+            pstmt.setInt(1, id);
+            pstmt.setString(2, diaryDate.toString());
+            pstmt.setString(3, diaryText.toString());
+
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
 }

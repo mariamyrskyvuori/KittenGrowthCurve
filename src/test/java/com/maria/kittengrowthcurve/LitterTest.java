@@ -5,6 +5,7 @@
  */
 package com.maria.kittengrowthcurve;
 
+import com.maria.kittengrowthcurve.domain.Kitten;
 import com.maria.kittengrowthcurve.domain.Litter;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,18 +28,18 @@ public class LitterTest {
     }
     
     
-  /*  @BeforeEach
+    @BeforeEach
     public void setUp() {
-        litter = new Litter("Maria", "Antti", "pentue", new LocalDate());
+        litter = new Litter("Maria", "Antti", "pentue", LocalDate.of(2020, 8, 25));
         litter.calculateDates();
         litter.setId(1);
         
         int i = 0;
         while(i<5){
             if (i % 2 == 0) {
-                litter.addKitten(new Kitten("pentu" + i, "Uros", "19:22", 100 + i, "x", "x", i));
+                litter.addKitten(new Kitten("pentu" + i, "Uros", "19:22", "y", "x", i, i));
             } else {
-            litter.addKitten(new Kitten("pentu" + i, "Naaras", "19:23", 100 + i, "x", "x", i));
+                litter.addKitten(new Kitten("pentu" + i, "Naaras", "19:23", "y", "x", i, i));
             }
             i++;
         }
@@ -51,94 +52,76 @@ public class LitterTest {
     /**
      * Test of getKittens method, of class Litter.
      */
-    /*@Test
+    @Test
     public void testGetKittens() {
-        
-        assertEquals(expResult, result);
-        
-    }*/
+        assertEquals(5, litter.getKittens().size());
+    }
 
     /**
      * Test of setKittens method, of class Litter.
      */
-    //@Test
-    /*public void testSetKittens() {
-        System.out.println("setKittens");
-        ArrayList<Kitten> kittens = null;
-        Litter instance = null;
-        instance.setKittens(kittens);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
+    @Test
+    public void testSetKittens() {
+        Litter localLitter = new Litter("Maria", "Antti", "pentue", LocalDate.of(2020, 8, 25));
+        localLitter.addKitten(new Kitten("pentu", "Uros", "19:22", "x", "x", 1, 1));
+        assertEquals(1, localLitter.getKittens().size());
+    }
 
     /**
      * Test of calculateDates method, of class Litter.
      */
-    //@Test
+    @Test
     public void testCalculateDates() {
-        System.out.println("calculateDates");
-        Litter instance = null;
-        instance.calculateDates();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(LocalDate.of(2020, 10, 30), litter.getBirth());
+        assertEquals(LocalDate.of(2021, 2, 5), litter.getDeliveryDate());
     }
 
     /**
      * Test of getLitterName method, of class Litter.
      */
-    //@Test
+    @Test
     public void testGetLitterName() {
-        
         assertEquals("pentue", litter.getLitterName());
-        
     }
 
     /**
      * Test of getEstablishmentDate method, of class Litter.
      */
-    //@Test
+    @Test
     public void testGetEstablishmentDate() {
-        assertEquals("2020-11-05", litter.getEstablishmentDate().toString());
+        assertEquals(LocalDate.of(2020, 8, 25), litter.getEstablishmentDate());
     }
 
     /**
      * Test of getBirth method, of class Litter.
      */
-    //@Test
+    @Test
     public void testGetBirth() {
-        
-        assertEquals("2021-01-10", litter.getBirth().toString());
-        
+        assertEquals(LocalDate.of(2020, 10, 30), litter.getBirth());   
     }
 
     /**
      * Test of getDeliveryDate method, of class Litter.
      */
-    //@Test
+    @Test
     public void testGetDeliveryDate() {
-        
-        assertEquals("2021-04-18", litter.getDeliveryDate().toString());
-        
+        assertEquals(LocalDate.of(2021, 2, 5), litter.getDeliveryDate());
     }
 
     /**
      * Test of getDam method, of class Litter.
      */
-    //@Test
+    @Test
     public void testGetDam() {
-        
         assertEquals("Maria", litter.getDam());
-        
     }
 
     /**
      * Test of getSire method, of class Litter.
      */
-    //@Test
-    public void testGetSire() {
-        
+    @Test
+    public void testGetSire() {    
         assertEquals("Antti", litter.getSire());
-        
     }
 
     /**
@@ -146,9 +129,7 @@ public class LitterTest {
      */
     //@Test
     public void testGetId() {
-        
         assertEquals(1, litter.getId());
-        
     }
 
     /**
@@ -181,31 +162,25 @@ public class LitterTest {
     /**
      * Test of getKittenCount method, of class Litter.
      */
-    //@Test
-    public void testGetKittenCount() {
-        
+    @Test
+    public void testGetKittenCount() {    
         assertEquals(5, litter.getKittenCount());
-        
     }
 
     /**
      * Test of getMaleKittenCount method, of class Litter.
      */
-    //@Test
+    @Test
     public void testGetMaleKittenCount() {
-        
-        assertEquals(2, litter.getMaleKittenCount());
-        
+        assertEquals(3, litter.getMaleKittenCount());
     }
 
     /**
      * Test of getFemaleKittenCount method, of class Litter.
      */
-    //@Test
-    public void testGetFemaleKittenCount() {
-        
-        assertEquals(3, litter.getFemaleKittenCount());
-        
+    @Test
+    public void testGetFemaleKittenCount() {    
+        assertEquals(2, litter.getFemaleKittenCount());
     }
 
     /**
@@ -213,12 +188,6 @@ public class LitterTest {
      */
     //@Test
     public void testGetEmsKitten() {
-        System.out.println("getEmsKitten");
-        Litter instance = null;
-        String expResult = "";
-        String result = instance.getEmsKitten();
-        assertEquals(expResult, litter.getEmsKitten());
-        
+        assertEquals("x", litter.getEmsKitten());
     }
-    
 }

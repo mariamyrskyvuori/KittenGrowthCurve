@@ -1,12 +1,12 @@
 package com.maria.kittengrowthcurve;
 
+import com.maria.kittengrowthcurve.domain.Diary;
 import com.maria.kittengrowthcurve.domain.Kitten;
 import com.maria.kittengrowthcurve.domain.Litter;
 import com.maria.kittengrowthcurve.domain.Weight;
 import java.util.ArrayList;
 import java.sql.*;
 import java.time.LocalDate;
-import javafx.scene.control.TextArea;
 
 /**
  *
@@ -14,36 +14,54 @@ import javafx.scene.control.TextArea;
  */
 public class KittenService {
 
-    public KittenService() {
-    }
-
-    //Luo pentueolion ja kutsuu metodia, joka laittaa sen kantaan
     public boolean addLitter(String dam, String sire, String litterName, LocalDate establishmentDate) {
         Litter litter = new Litter(dam, sire, litterName, establishmentDate);
         litter.calculateDates();
+        
         return addLitterToDb(litter);
     }
 
-    //hakee pentueet kannasta
-    public ArrayList<Litter> getLitters() {
+    public ArrayList<Litter> getAllDataFromDb() {
+        ArrayList<Litter> littersFromDb = getLitters();
+        
+        for (Litter litter : littersFromDb) {
+            ArrayList<Kitten> kittens = getKittensByLitterId(litter.getId());
+            
+            for (int i = 0; i < kittens.size(); i++) {
+                ArrayList<Weight> weightList = getKittenWeightsByKittenId(kittens.get(i).getId());
+                kittens.get(i).setWeightList(weightList);
+            }
+            
+            litter.setKittens(kittens);
+        }
+        
+        return littersFromDb;
+    }
+    
 
-        try ( Connection conn = this.connect();  Statement stmt = conn.createStatement();) {
+    private Litter makeLitterFromQuery(ResultSet rs) throws SQLException {
+        int id = rs.getInt("id");
+        String litterName = rs.getString("litterName");
+        String dam = rs.getString("dam");
+        String sire = rs.getString("sire");
+        String establishment = rs.getString("establishment");
+        String birth = rs.getString("birth");
+        String delivery = rs.getString("delivery");
+        LocalDate birthDay = LocalDate.parse(birth);
+        LocalDate establishmentDay = LocalDate.parse(establishment);
+        LocalDate deliveryDay = LocalDate.parse(delivery);
+        Litter litter = new Litter(dam, sire, litterName, establishmentDay, birthDay, deliveryDay, id);
+
+        return litter;
+    }
+
+    public ArrayList<Litter> getLitters() {
+        try (Connection conn = this.connect();  Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery("SELECT * FROM Litter;");
             ArrayList<Litter> litters = new ArrayList();
+            
             while (rs.next()) {
-                int id = rs.getInt("id");
-                String litterName = rs.getString("litterName");
-                String dam = rs.getString("dam");
-                String sire = rs.getString("sire");
-                String establishment = rs.getString("establishment");
-                String birth = rs.getString("birth");
-                String delivery = rs.getString("delivery");
-
-                LocalDate birthDay = LocalDate.parse(birth);
-                LocalDate establishmentDay = LocalDate.parse(establishment);
-                LocalDate deliveryDay = LocalDate.parse(delivery);
-                Litter litter = new Litter(dam, sire, litterName, establishmentDay, birthDay, deliveryDay, id);
-                litters.add(litter);
+                litters.add(makeLitterFromQuery(rs));
             }
             rs.close();
             stmt.close();
@@ -55,19 +73,15 @@ public class KittenService {
         }
     }
 
-    //lisää pentueen kantaan ja kertoo, onnistuiko lisäys
     public boolean addLitterToDb(Litter litter) {
         String sql = "INSERT INTO Litter(dam, sire, litterName, establishment, birth, delivery) VALUES(?,?,?,?,?,?)";
-
-        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            //Class.forName("org.sqlite.JDBC");
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, litter.getDam());
             pstmt.setString(2, litter.getSire());
             pstmt.setString(3, litter.getLitterName());
             pstmt.setString(4, litter.getEstablishmentDate().toString());
             pstmt.setString(5, litter.getBirth().toString());
             pstmt.setString(6, litter.getDeliveryDate().toString());
-
             pstmt.executeUpdate();
             conn.close();
             pstmt.close();
@@ -78,7 +92,6 @@ public class KittenService {
         }
     }
 
-    //Luo yhteyden kantaan
     private Connection connect() {
         Connection conn = null;
         try {
@@ -90,30 +103,24 @@ public class KittenService {
         return conn;
     }
 
-    //Luo pentuolion ja kutsuu sen kantaan tallentavaa metodia
     public int addKitten(int litterId, String kittenName, String sex, String birthTime, int weigth, String regno, String ems, LocalDate birth) {
         Kitten kitten = new Kitten(kittenName, sex, birthTime, regno, ems, litterId);
         int kittenId = addKittenToDb(kitten);
         if (kittenId != -1) {
             addWeight(kittenId, weigth, birth);
         }
-
         return kittenId;
     }
 
-    //Tallentaa pennun kantaan ja kertoo, onnistuiko tallennus
     public int addKittenToDb(Kitten kitten) {
         String sql = "INSERT INTO Kitten(litter_id, name, sex,regNo, emsCode, birthTime) VALUES(?,?,?,?,?,?)";
-
-        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            //Class.forName("org.sqlite.JDBC");
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, kitten.getLitterId());
             pstmt.setString(2, kitten.getKittenName());
             pstmt.setString(3, kitten.getSex());
             pstmt.setString(4, kitten.getRegno());
             pstmt.setString(5, kitten.getEms());
             pstmt.setString(6, kitten.getBirthTime());
-
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             int kittenId = -1;
@@ -129,10 +136,9 @@ public class KittenService {
         }
     }
 
-    //hakee pentueen pennut kannasta
     ArrayList<Kitten> getKittensByLitterId(int litterId) {
         String sql = "SELECT * FROM Kitten WHERE litter_id = ?";
-        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, litterId);
             ResultSet rs = pstmt.executeQuery();
             ArrayList<Kitten> kittens = new ArrayList();
@@ -143,7 +149,6 @@ public class KittenService {
                 String birthTime = rs.getString("birthTime");
                 String regno = rs.getString("regNo");
                 String ems = rs.getString("emsCode");
-
                 Kitten kitten = new Kitten(kittenName, sex, birthTime, regno, ems, litterId, id);
                 kittens.add(kitten);
             }
@@ -159,7 +164,7 @@ public class KittenService {
 
     ArrayList<Weight> getKittenWeightsByKittenId(int kittenId) {
         String sql = "SELECT * FROM Weight WHERE kitten_id = ?";
-        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, kittenId);
             ResultSet rs = pstmt.executeQuery();
             ArrayList<Weight> weightList = new ArrayList<>();
@@ -167,9 +172,7 @@ public class KittenService {
                 String date = rs.getString("date");
                 Integer weight = rs.getInt("weight");
                 Integer id = rs.getInt("id");
-
                 Weight weightObject = new Weight(id, LocalDate.parse(date), weight);
-
                 weightList.add(weightObject);
             }
             rs.close();
@@ -184,12 +187,10 @@ public class KittenService {
 
     public boolean addWeight(int kittenId, int weight, LocalDate date) {
         String sql = "INSERT INTO Weight(kitten_id, weight, date) VALUES(?,?,?)";
-        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            //Class.forName("org.sqlite.JDBC");
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, kittenId);
             pstmt.setInt(2, weight);
             pstmt.setString(3, date.toString());
-
             pstmt.executeUpdate();
             conn.close();
             pstmt.close();
@@ -201,11 +202,9 @@ public class KittenService {
     }
 
     public Boolean removeWeight(int weightId) {
-
         String sql = "DELETE FROM Weight WHERE id = ?";
-        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, weightId);
-
             pstmt.executeUpdate();
             conn.close();
             pstmt.close();
@@ -218,16 +217,13 @@ public class KittenService {
 
     public int updateKitten(int kittenId, String kittenName, String sex, String birthTime, int weigth, String regno, String ems, LocalDate birth) {
         String sql = "UPDATE Kitten SET name = ?, sex = ?,regNo = ?, emsCode= ?, birthTime = ? WHERE id = ?";
-
-        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            //Class.forName("org.sqlite.JDBC");
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, kittenName);
             pstmt.setString(2, sex);
             pstmt.setString(3, regno);
             pstmt.setString(4, ems);
             pstmt.setString(5, birthTime);
             pstmt.setInt(6, kittenId);
-
             pstmt.executeUpdate();
             conn.close();
             pstmt.close();
@@ -236,22 +232,16 @@ public class KittenService {
             System.out.println(e.getMessage());
             return -2;
         }
-        
     }
-    //dam, sire, litterName, establishment, birth, delivery
-    
+
     public boolean updateLitter(String dam, String sire, LocalDate establishmentDate, LocalDate birth, int id) {
         String sql = "UPDATE Litter SET dam = ?, sire = ?, establishment = ?, birth = ? WHERE id = ?";
-
-        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            //Class.forName("org.sqlite.JDBC");
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, dam);
             pstmt.setString(2, sire);
             pstmt.setString(3, establishmentDate.toString());
             pstmt.setString(4, birth.toString());
             pstmt.setInt(5, id);
-            
-
             pstmt.executeUpdate();
             conn.close();
             pstmt.close();
@@ -260,17 +250,14 @@ public class KittenService {
             System.out.println(e.getMessage());
             return false;
         }
-        
     }
 
-    public boolean updateDiary(int id, LocalDate diaryDate, TextArea diaryText) {
+    public boolean updateDiary(int id, LocalDate diaryDate, String diaryText) {
         String sql = "INSERT INTO Diary(litter_id, date, text) VALUES(?,?,?)";
-        try ( Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            //Class.forName("org.sqlite.JDBC");
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.setString(2, diaryDate.toString());
-            pstmt.setString(3, diaryText.toString());
-
+            pstmt.setString(3, diaryText);
             pstmt.executeUpdate();
             conn.close();
             pstmt.close();
@@ -281,4 +268,26 @@ public class KittenService {
         }
     }
 
+    public ArrayList<Diary> getWholeDiaryByLitterId(int litterId) {
+        String sql = "SELECT * FROM Diary WHERE litter_id = ?";
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, litterId);
+            ResultSet rs = pstmt.executeQuery();
+            ArrayList<Diary> diaryList = new ArrayList<>();
+            while (rs.next()) {
+                String date = rs.getString("date");
+                String text = rs.getString("text");
+                Integer id = rs.getInt("id");
+                Diary diaryObject = new Diary(id, LocalDate.parse(date), text);
+                diaryList.add(diaryObject);
+            }
+            rs.close();
+            pstmt.close();
+            conn.close();
+            return diaryList;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 }

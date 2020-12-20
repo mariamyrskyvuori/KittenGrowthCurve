@@ -22,6 +22,7 @@ public class Litter {
     private String sire;
     private int id;
     private ArrayList<Kitten> kittens;
+    ArrayList<Diary> diaryList = new ArrayList<>();
 
     public Litter(String dam, String sire, String litterName, LocalDate establishmentDate) {
         this.dam = dam;
@@ -42,23 +43,12 @@ public class Litter {
         this.kittens = new ArrayList<>();
     }
 
-    public Litter(String dam, String sire, String litterName, String establishment, LocalDate birth, String delivery, int id) {
-        
-        
-        /* 
-                Record r = new Record();
-                LocalDate date = new Date(1967, 06, 22);
-                r.setDateOfBirth(new Date(date));
-                LocalDate locald = LocalDate.of(1967, 06, 22);
-                Date date = Date.valueOf(locald); // Magic happens here!
-                r.setDateOfBirth(date);
-                
-                Date date = r.getDate();
-                LocalDate localD = date.toLocalDate();*/
-    }
-
     public ArrayList<Kitten> getKittens() {
         return kittens;
+    }
+
+    public ArrayList<Diary> getDiaryList() {
+        return diaryList;
     }
 
     public void addKitten(Kitten kitten) {
@@ -67,6 +57,10 @@ public class Litter {
 
     public void setKittens(ArrayList<Kitten> kittens) {
         this.kittens = kittens;
+    }
+
+    public void setDiaryList(ArrayList<Diary> diaryList) {
+        this.diaryList = diaryList;
     }
 
     // laskee mahdollisen synnytyspäivän ja sen mukaan luovutusajankohdan
@@ -159,4 +153,5 @@ public class Litter {
         }
         return emsKitten;
     }
+
 }

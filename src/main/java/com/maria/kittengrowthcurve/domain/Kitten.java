@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author maria
  */
 public class Kitten {
-    
+
     private String kittenName;
     private String sex;
     private String birthTime;
@@ -21,31 +21,31 @@ public class Kitten {
     private int litterId;
     private int id;
     ArrayList<Weight> weightList = new ArrayList<>();
-    
+
     public Kitten(String kittenName, String sex, String birthTime) {
         this.kittenName = kittenName;
         this.sex = sex;
         this.birthTime = birthTime;
-        
+
     }
-    
-    public Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId){
+
+    public Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId) {
         this.litterId = litterId;
         this.kittenName = kittenName;
         this.sex = sex;
         this.birthTime = birthTime;
         this.regno = regno;
-        this.ems = ems;   
+        this.ems = ems;
     }
-    
-    public Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId, int kittenId){
+
+    public Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId, int kittenId) {
         this.id = kittenId;
         this.litterId = litterId;
         this.kittenName = kittenName;
         this.sex = sex;
         this.birthTime = birthTime;
         this.regno = regno;
-        this.ems = ems;   
+        this.ems = ems;
     }
 
     public String getKittenName() {
@@ -71,8 +71,8 @@ public class Kitten {
     public int getLitterId() {
         return litterId;
     }
- 
-    public ArrayList<Weight> getWeightList(){
+
+    public ArrayList<Weight> getWeightList() {
         return weightList;
     }
 

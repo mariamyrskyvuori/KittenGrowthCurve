@@ -252,7 +252,23 @@ public class KittenService {
         }
     }
 
-    public boolean updateDiary(int id, LocalDate diaryDate, String diaryText) {
+    public boolean updateDiary(LocalDate diaryDate, String diaryText, int id) {
+        String sql = "UPDATE Diary SET date = ?, text = ? WHERE id = ?";
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, diaryDate.toString());
+            pstmt.setString(2, diaryText);
+            pstmt.setInt(3, id);
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean insertDiary(int id, LocalDate diaryDate, String diaryText) {
         String sql = "INSERT INTO Diary(litter_id, date, text) VALUES(?,?,?)";
         try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);

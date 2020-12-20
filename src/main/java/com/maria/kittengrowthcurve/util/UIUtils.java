@@ -8,9 +8,11 @@ package com.maria.kittengrowthcurve.util;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 /**
  *
@@ -46,5 +48,12 @@ public class UIUtils {
         gridPane.maxHeight(500);
         gridPane = setColWidthsToGridPane(new int[]{80, 220, 110}, gridPane);
         return gridPane;
+    }
+    
+    public static HBox getInitialHBox() {
+        HBox hBox = new HBox();
+        hBox.setPadding(new Insets(20, 30, 10, 30));
+        hBox.setSpacing(33);
+        return hBox;
     }
 }

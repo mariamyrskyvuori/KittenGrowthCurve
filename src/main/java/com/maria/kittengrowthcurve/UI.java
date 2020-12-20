@@ -13,7 +13,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -49,6 +51,7 @@ public class UI {
     private KittenService service = new KittenService();
     private final Stage stage;
     private int activeLitterId = -1;
+    Set<Integer> hiddenKittensIds = new HashSet<Integer> ();
 
     UI(Stage stage) {
         this.stage = stage;
@@ -63,7 +66,6 @@ public class UI {
     private Scene getInitialScene() {
         //Yläosa: Pentueen lisäys ja valinta.
         BorderPane initialLayout = new BorderPane();
-        Scene addInitialScene = new Scene(initialLayout);
         HBox topButtonsHbox = getInitialHBox();
         
         Button addLitter = new Button("Lisää pentue");
@@ -117,7 +119,7 @@ public class UI {
         topButtonsHbox.getChildren().addAll(comboBox);
         initialLayout.setTop(topButtonsHbox);
         
-        return addInitialScene;
+        return new Scene(initialLayout);
     }
 
     //näkymä pentueen lisäämistä varten
@@ -219,13 +221,18 @@ public class UI {
             weigh.setOnMouseClicked((event) -> {
                 stage.setScene(getWeightKittenScene(kitten));
             });
-            ToggleButton show = new ToggleButton("piilota");
-            gridPane.add(show, 2, 1 + i);
-            show.setOnMouseClicked((event) -> {
-                if (show.isSelected()) {
-                    show.setText("näytä");
+            ToggleButton showButton = new ToggleButton("piilota");
+            showButton.setSelected(hiddenKittensIds.contains(kitten.getId()));
+            gridPane.add(showButton, 2, 1 + i);
+            showButton.setOnMouseClicked((event) -> {
+                if (showButton.isSelected()) {
+                    hiddenKittensIds.add(kitten.getId());
+                    showButton.setText("näytä");
+                    //initialLayout.setCenter(getWeightCurveLayout(litter));
                 } else {
-                    show.setText("piilota");
+                    hiddenKittensIds.remove(kitten.getId());
+                    showButton.setText("piilota");
+                    //initialLayout.setCenter(getWeightCurveLayout(litter));
                 }
             });
         }
@@ -364,7 +371,12 @@ public class UI {
             boolean successful = false;
             
             if (isValidDiaryDateField) {
-                successful = service.updateDiary(litter.getId(), diaryDate, diaryView.getDiaryText().getText());
+                if (activeDiary != null) {
+                    successful = service.updateDiary(diaryDate, diaryView.getDiaryText().getText(), activeDiary.getId());
+                } else {
+                    successful = service.insertDiary(litter.getId(), diaryDate, diaryView.getDiaryText().getText());
+                }
+                stage.setScene(getDiaryScene(litter, null));
             }
             if (successful) {
                 diaryView.setSaveResultMessage("Onnistui!");
@@ -396,12 +408,9 @@ public class UI {
         final ScrollPane scrollDiary = getDiaryScrollPane();
         scrollDiary.setContent(diaryOfLitter);
         
-        scrollDiary.viewportBoundsProperty().addListener(new ChangeListener<Bounds>() {
-            @Override
-            public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
-                diaryOfLitter.setPrefWidth(450);
-                diaryOfLitter.setPrefHeight(bounds.getHeight());
-            }
+        scrollDiary.viewportBoundsProperty().addListener((ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) -> {
+            diaryOfLitter.setPrefWidth(450);
+            diaryOfLitter.setPrefHeight(bounds.getHeight());
         });
 
         diaryList.sort(Comparator.comparing(Diary::getDate));
@@ -414,7 +423,7 @@ public class UI {
             textField.setWrappingWidth(410);
             Button mode = new Button("Muokkaa");
             mode.setOnMouseClicked((event) -> {
-                getDiaryScene(litter, diary);
+                stage.setScene(getDiaryScene(litter, diary));
             });
             allDiaries.add(date, 0, 0);
             allDiaries.add(ageField, 1, 0);
@@ -433,14 +442,16 @@ public class UI {
 
     private Node getWeightCurveLayout(Litter litter) {
         Map<String, Map<Integer, Integer>> weightCurve = new HashMap();
-        
         for (Kitten kitten : litter.getKittens()) {
             Map<Integer, Integer> weightMap = new HashMap();
             
             for (Weight weight : kitten.getWeightList()) {
                 weightMap.put(getAge(litter.getBirth(), weight.getDate()), weight.getWeight());
             }
-            weightCurve.put(kitten.getKittenName(), weightMap);
+
+            if (!hiddenKittensIds.contains(kitten.getId())) {
+                weightCurve.put(kitten.getKittenName(), weightMap);
+            }
         }
 
         NumberAxis yAkseli = new NumberAxis(0, 2500, 100);

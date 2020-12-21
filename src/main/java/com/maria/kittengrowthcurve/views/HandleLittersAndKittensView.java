@@ -31,6 +31,7 @@ public class HandleLittersAndKittensView {
     TextFormField sireField = new TextFormField("Isä", true);
     DatePickerFormField establishmentField = new DatePickerFormField("Astutuspäivä", true);
     DatePickerFormField birthField = new DatePickerFormField("Syntymäpäivä", true);
+    TextFormField litterNameField = new TextFormField("Pentueen nimi", true);
     Label saveResultMessage = new Label("");
     Button backButton = new Button("Takaisin");
 
@@ -44,6 +45,7 @@ public class HandleLittersAndKittensView {
         sireField.setValue(litter.getSire());
         establishmentField.setValue(litter.getEstablishmentDate());
         birthField.setValue(litter.getBirth());
+        litterNameField.setValue(litter.getLitterName());
 
         gridPane.setAlignment(Pos.TOP_LEFT);
         gridPane.setVgap(10);
@@ -62,7 +64,8 @@ public class HandleLittersAndKittensView {
         gridPane.add(sireField.getNode(), 0, 1);
         gridPane.add(establishmentField.getNode(), 1, 0);
         gridPane.add(birthField.getNode(), 1, 1);
-        gridPane.add(saveResultMessage, 2, 0);
+        gridPane.add(litterNameField.getNode(), 2, 0);
+        gridPane.add(saveResultMessage, 3, 0);
     }
 
     public TextFormField getDamField() {
@@ -79,6 +82,10 @@ public class HandleLittersAndKittensView {
 
     public DatePickerFormField getBirthField() {
         return birthField;
+    }
+    
+    public TextFormField getLitterNameField() {
+        return litterNameField;
     }
 
     public Button getBackButton() {
@@ -111,5 +118,11 @@ public class HandleLittersAndKittensView {
     public void setSaveResultMessage(String saveResultMessage) {
         this.saveResultMessage.setText(saveResultMessage);
     }
+
+    public Object litterNameField() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
 
 }

@@ -57,7 +57,7 @@ public class KittenTest {
      */
     @Test
     public void testGetBirthTime() {
-        assertEquals("12:20", kitten.getBirthTime());
+        assertEquals("12:20", kitten.getOfficialName());
     }
 
     /**

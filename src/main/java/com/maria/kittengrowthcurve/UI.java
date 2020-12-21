@@ -51,28 +51,27 @@ public class UI {
     private KittenService service = new KittenService();
     private final Stage stage;
     private int activeLitterId = -1;
-    Set<Integer> hiddenKittensIds = new HashSet<Integer> ();
+    Set<Integer> hiddenKittensIds = new HashSet<Integer>();
+    BorderPane initialLayout = new BorderPane();
 
     UI(Stage stage) {
         this.stage = stage;
     }
 
     public void start() {
-        stage.setScene(getInitialScene());
+        stage.setScene(new Scene(getInitialLayout()));
         stage.show();
     }
 
     //alkunäkymä
-    private Scene getInitialScene() {
-        //Yläosa: Pentueen lisäys ja valinta.
-        BorderPane initialLayout = new BorderPane();
+    private BorderPane getInitialLayout() {
         HBox topButtonsHbox = getInitialHBox();
         
         Button addLitter = new Button("Lisää pentue");
         topButtonsHbox.getChildren().addAll(addLitter);
         
         addLitter.setOnMouseClicked((event) -> {
-            stage.setScene(getAddLitterScene());
+            stage.getScene().setRoot(getAddLitterLayout());
         });
         
         ArrayList<Litter> littersWithAllData = service.getAllDataFromDb();
@@ -97,7 +96,7 @@ public class UI {
                 initialLayout.setLeft(getKittenInfoLayout(litter));
                 initialLayout.setCenter(getWeightCurveLayout(litter));
                 diaryButton.setOnMouseClicked((diaryEvent) -> {
-                    stage.setScene(getDiaryScene(litter, null));
+                    stage.getScene().setRoot(getDiaryPage(litter, null));
                 });
                 topButtonsHbox.getChildren().addAll(diaryButton);
             }
@@ -110,7 +109,7 @@ public class UI {
                     initialLayout.setLeft(getKittenInfoLayout(litter));
                     initialLayout.setCenter(getWeightCurveLayout(litter));
                     diaryButton.setOnMouseClicked((event) -> {
-                        stage.setScene(getDiaryScene(litter, null));
+                        stage.getScene().setRoot(getDiaryPage(litter, null));
                     });
                     topButtonsHbox.getChildren().addAll(diaryButton);
                 }
@@ -119,11 +118,11 @@ public class UI {
         topButtonsHbox.getChildren().addAll(comboBox);
         initialLayout.setTop(topButtonsHbox);
         
-        return new Scene(initialLayout);
+        return initialLayout;
     }
 
     //näkymä pentueen lisäämistä varten
-    private Scene getAddLitterScene() {
+    private BorderPane getAddLitterLayout() {
         AddLitterView addLitterView = new AddLitterView();
         addLitterView.getSaveButton().setOnMouseClicked((event) -> {
             boolean litterAddSuccessfull = false;
@@ -142,18 +141,18 @@ public class UI {
         });
         
         addLitterView.getBackButton().setOnMouseClicked((event) -> {
-            stage.setScene(getInitialScene());
+            stage.getScene().setRoot(getInitialLayout());
         });
 
-        return new Scene(addLitterView.getBorderPane());
+        return addLitterView.getBorderPane();
     }
 
     //näkymä pentujen lisäämistä varten
-    private Scene getAddOrUpdateKittenScene(int litterId, LocalDate birth, Kitten kitten) {
+    private BorderPane getAddOrUpdateKittenPage(int litterId, LocalDate birth, Kitten kitten) {
         AddOrUpdateKittenView addOrUpdateKittenView = new AddOrUpdateKittenView(litterId, kitten);
         
         addOrUpdateKittenView.getBackButton().setOnMouseClicked((event) -> {
-            stage.setScene(getInitialScene());
+            stage.getScene().setRoot(getInitialLayout());
         });
         
         addOrUpdateKittenView.getSaveButton().setOnMouseClicked((event) -> {
@@ -188,7 +187,7 @@ public class UI {
             }
         });
         
-        return new Scene(addOrUpdateKittenView.getBorderPane());
+        return addOrUpdateKittenView.getBorderPane();
     }
 
     //näkymä pentueen tiedoista
@@ -196,11 +195,11 @@ public class UI {
         LitterInfoView litterInfoView = new LitterInfoView(litter);
         
         litterInfoView.getAddKittenButton().setOnMouseClicked((event) -> {
-            stage.setScene(getAddOrUpdateKittenScene(litter.getId(), litter.getBirth(), null));
+            stage.getScene().setRoot(getAddOrUpdateKittenPage(litter.getId(), litter.getBirth(), null));
         });
         
         litterInfoView.getEditButton().setOnMouseClicked((event) -> {
-            stage.setScene(handleLittersAndKittens(litter));
+            stage.getScene().setRoot(getHandleLittersAndKittensPage(litter));
         });
         
         return litterInfoView.getGridPane();
@@ -219,20 +218,22 @@ public class UI {
             gridPane.add(weigh, 1, 1 + i);
             final Kitten kitten = kittens.get(i);
             weigh.setOnMouseClicked((event) -> {
-                stage.setScene(getWeightKittenScene(kitten));
+                stage.getScene().setRoot(getWeightKittenPage(kitten));
             });
-            ToggleButton showButton = new ToggleButton("piilota");
-            showButton.setSelected(hiddenKittensIds.contains(kitten.getId()));
+            boolean isSelected = hiddenKittensIds.contains(kitten.getId());
+            ToggleButton showButton = new ToggleButton(isSelected ? "näytä" : "piilota");
+            showButton.setSelected(isSelected);
+            
             gridPane.add(showButton, 2, 1 + i);
             showButton.setOnMouseClicked((event) -> {
                 if (showButton.isSelected()) {
                     hiddenKittensIds.add(kitten.getId());
                     showButton.setText("näytä");
-                    //initialLayout.setCenter(getWeightCurveLayout(litter));
+                    initialLayout.setCenter(getWeightCurveLayout(litter));
                 } else {
                     hiddenKittensIds.remove(kitten.getId());
                     showButton.setText("piilota");
-                    //initialLayout.setCenter(getWeightCurveLayout(litter));
+                    initialLayout.setCenter(getWeightCurveLayout(litter));
                 }
             });
         }
@@ -241,14 +242,14 @@ public class UI {
     }
 
     //näkymä pentujen punnitsemiseen 
-    private Scene getWeightKittenScene(Kitten kitten) {
+    private BorderPane getWeightKittenPage(Kitten kitten) {
         WeightKittenView weightKittenView = new WeightKittenView(kitten);
         weightKittenView.getBorderPane().setCenter(getAllWeightsForKittenLayout(kitten.getId(),
                 kitten.getWeightList(),
                 weightKittenView.getBorderPane()));
         
         weightKittenView.getBackButton().setOnMouseClicked((event) -> {
-            stage.setScene(getInitialScene());
+            stage.getScene().setRoot(getInitialLayout());
         });
         
         weightKittenView.getSaveWeightButton().setOnMouseClicked((event) -> {
@@ -267,10 +268,10 @@ public class UI {
             }
         });
         
-        return new Scene(weightKittenView.getBorderPane());
+        return weightKittenView.getBorderPane();
     }
 
-    private Scene handleLittersAndKittens(Litter litter) {
+    private BorderPane getHandleLittersAndKittensPage(Litter litter) {
         HandleLittersAndKittensView handleLittersAndKittensView = new HandleLittersAndKittensView(litter);
         
         handleLittersAndKittensView.getUpdateLitterButton().setOnMouseClicked((event) -> {
@@ -278,10 +279,11 @@ public class UI {
             String sire = handleLittersAndKittensView.getSireField().getValue();
             LocalDate establishmentDate = handleLittersAndKittensView.getEstablishmentField().getValue();
             LocalDate birth = handleLittersAndKittensView.getBirthField().getValue();
+            String litterName = handleLittersAndKittensView.getLitterNameField().getValue();
             boolean successful = false;
             
             if (handleLittersAndKittensView.isValid()) {
-                successful = service.updateLitter(dam, sire, establishmentDate, birth, litter.getId());
+                successful = service.updateLitter(dam, sire, establishmentDate, birth, litterName, litter.getId());
             }
             if (successful) {
                 handleLittersAndKittensView.setSaveResultMessage("Onnistui!");
@@ -293,10 +295,10 @@ public class UI {
         handleLittersAndKittensView.getBorderPane().setCenter(getAllDataForKittens(litter));
         
         handleLittersAndKittensView.getBackButton().setOnMouseClicked((event) -> {
-            stage.setScene(getInitialScene());
+            stage.getScene().setRoot(getInitialLayout());
         });
         
-        return new Scene(handleLittersAndKittensView.getBorderPane());
+        return handleLittersAndKittensView.getBorderPane();
     }
 
     //Listaa kaikki pentujen tiedot. Tarvitaan pentujen muokkaamiseen.
@@ -310,7 +312,7 @@ public class UI {
             GridPane allKittens = new GridPane();
             Button mode = new Button("Muokkaa");
             allKittens.add(new Text(kitten.getKittenName()), 0, 1 + i);
-            allKittens.add(new Text(kitten.getBirthTime()), 1, 1 + i);
+            allKittens.add(new Text(kitten.getOfficialName()), 1, 1 + i);
             allKittens.add(new Text(kitten.getSex()), 2, 1 + i);
             allKittens.add(new Text(kitten.getRegno()), 3, 1 + i);
             allKittens.add(new Text(kitten.getEms()), 4, 1 + i);
@@ -318,7 +320,7 @@ public class UI {
             allKittens.setHgap(10);
             allKittens = setColWidthsToGridPane(new int[]{80, 250, 40, 100, 100}, allKittens);
             mode.setOnMouseClicked((event) -> {
-                stage.setScene(getAddOrUpdateKittenScene(litter.getId(), litter.getBirth(), kitten));
+                stage.getScene().setRoot(getAddOrUpdateKittenPage(litter.getId(), litter.getBirth(), kitten));
             });
             kittensPane.getChildren().add(allKittens);
         }
@@ -355,7 +357,7 @@ public class UI {
         return weightsOfKitten;
     }
 
-    private Scene getDiaryScene(Litter litter, Diary activeDiary) {
+    private BorderPane getDiaryPage(Litter litter, Diary activeDiary) {
         DiaryView diaryView = new DiaryView(litter, activeDiary);
         
         if (activeDiary != null) {
@@ -376,7 +378,7 @@ public class UI {
                 } else {
                     successful = service.insertDiary(litter.getId(), diaryDate, diaryView.getDiaryText().getText());
                 }
-                stage.setScene(getDiaryScene(litter, null));
+                stage.getScene().setRoot(getDiaryPage(litter, null));
             }
             if (successful) {
                 diaryView.setSaveResultMessage("Onnistui!");
@@ -390,10 +392,10 @@ public class UI {
                 diaryView.getBorderPane()));
         
         diaryView.getBackButton().setOnMouseClicked((event) -> {
-            stage.setScene(getInitialScene());
+            stage.getScene().setRoot(getInitialLayout());
         });
         
-        return new Scene(diaryView.getBorderPane());
+        return diaryView.getBorderPane();
     }
 
     //Listaa kaikki päiväkirjamerkinnät
@@ -423,7 +425,7 @@ public class UI {
             textField.setWrappingWidth(410);
             Button mode = new Button("Muokkaa");
             mode.setOnMouseClicked((event) -> {
-                stage.setScene(getDiaryScene(litter, diary));
+                stage.getScene().setRoot(getDiaryPage(litter, diary));
             });
             allDiaries.add(date, 0, 0);
             allDiaries.add(ageField, 1, 0);

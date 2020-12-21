@@ -50,7 +50,6 @@ public class ComboBoxFormField {
     }
 
     public boolean isValid() {
-        System.out.println("field.getValue() " + field.getValue());
         if (isRequired && field.getValue() == null) {
             errorLabel.setText("Täytä puuttuva tieto");
             return false;

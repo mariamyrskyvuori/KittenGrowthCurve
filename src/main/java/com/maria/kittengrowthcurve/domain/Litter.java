@@ -108,6 +108,7 @@ public class Litter {
         this.id = id;
     }
 
+    @Override
     public String toString() {
         return litterName;
     }

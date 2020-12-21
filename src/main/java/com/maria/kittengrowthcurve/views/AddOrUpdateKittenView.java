@@ -57,7 +57,7 @@ public class AddOrUpdateKittenView {
         if (kitten != null) {
             nameOfKittenField.setValue(kitten.getKittenName());
             sexComboBoxField.setValue(kitten.getSex());
-            birthTimeOfKittenField.setValue(kitten.getBirthTime());
+            birthTimeOfKittenField.setValue(kitten.getOfficialName());
             weightOfKittenField.setValue(String.valueOf(kitten.getWeightList().get(0).getWeight()));
             regNoOfKittenField.setValue(kitten.getRegno());
             emsCodeOfKittenField.setValue(kitten.getEms());

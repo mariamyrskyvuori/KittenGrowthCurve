@@ -103,8 +103,8 @@ public class KittenService {
         return conn;
     }
 
-    public int addKitten(int litterId, String kittenName, String sex, String birthTime, int weigth, String regno, String ems, LocalDate birth) {
-        Kitten kitten = new Kitten(kittenName, sex, birthTime, regno, ems, litterId);
+    public int addKitten(int litterId, String kittenName, String sex, String officialName, int weigth, String regno, String ems, LocalDate birth) {
+        Kitten kitten = new Kitten(kittenName, sex, officialName, regno, ems, litterId);
         int kittenId = addKittenToDb(kitten);
         if (kittenId != -1) {
             addWeight(kittenId, weigth, birth);
@@ -113,14 +113,14 @@ public class KittenService {
     }
 
     public int addKittenToDb(Kitten kitten) {
-        String sql = "INSERT INTO Kitten(litter_id, name, sex,regNo, emsCode, birthTime) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO Kitten(litter_id, name, sex,regNo, emsCode, officialName) VALUES(?,?,?,?,?,?)";
         try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, kitten.getLitterId());
             pstmt.setString(2, kitten.getKittenName());
             pstmt.setString(3, kitten.getSex());
             pstmt.setString(4, kitten.getRegno());
             pstmt.setString(5, kitten.getEms());
-            pstmt.setString(6, kitten.getBirthTime());
+            pstmt.setString(6, kitten.getOfficialName());
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             int kittenId = -1;
@@ -146,10 +146,10 @@ public class KittenService {
                 int id = rs.getInt("id");
                 String kittenName = rs.getString("name");
                 String sex = rs.getString("sex");
-                String birthTime = rs.getString("birthTime");
+                String officialName = rs.getString("officialName");
                 String regno = rs.getString("regNo");
                 String ems = rs.getString("emsCode");
-                Kitten kitten = new Kitten(kittenName, sex, birthTime, regno, ems, litterId, id);
+                Kitten kitten = new Kitten(kittenName, sex, officialName, regno, ems, litterId, id);
                 kittens.add(kitten);
             }
             rs.close();
@@ -215,14 +215,14 @@ public class KittenService {
         }
     }
 
-    public int updateKitten(int kittenId, String kittenName, String sex, String birthTime, int weigth, String regno, String ems, LocalDate birth) {
-        String sql = "UPDATE Kitten SET name = ?, sex = ?,regNo = ?, emsCode= ?, birthTime = ? WHERE id = ?";
+    public int updateKitten(int kittenId, String kittenName, String sex, String officialName, int weigth, String regno, String ems, LocalDate birth) {
+        String sql = "UPDATE Kitten SET name = ?, sex = ?,regNo = ?, emsCode= ?, officialName = ? WHERE id = ?";
         try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, kittenName);
             pstmt.setString(2, sex);
             pstmt.setString(3, regno);
             pstmt.setString(4, ems);
-            pstmt.setString(5, birthTime);
+            pstmt.setString(5, officialName);
             pstmt.setInt(6, kittenId);
             pstmt.executeUpdate();
             conn.close();
@@ -234,14 +234,15 @@ public class KittenService {
         }
     }
 
-    public boolean updateLitter(String dam, String sire, LocalDate establishmentDate, LocalDate birth, int id) {
-        String sql = "UPDATE Litter SET dam = ?, sire = ?, establishment = ?, birth = ? WHERE id = ?";
+    public boolean updateLitter(String dam, String sire, LocalDate establishmentDate, LocalDate birth, String litterName, int id) {
+        String sql = "UPDATE Litter SET dam = ?, sire = ?, establishment = ?, birth = ?, litterName = ?  WHERE id = ?";
         try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, dam);
             pstmt.setString(2, sire);
             pstmt.setString(3, establishmentDate.toString());
             pstmt.setString(4, birth.toString());
-            pstmt.setInt(5, id);
+            pstmt.setString(5, litterName);
+            pstmt.setInt(6, id);
             pstmt.executeUpdate();
             conn.close();
             pstmt.close();

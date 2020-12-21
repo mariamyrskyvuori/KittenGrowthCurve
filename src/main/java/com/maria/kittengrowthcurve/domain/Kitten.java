@@ -15,35 +15,35 @@ public class Kitten {
 
     private String kittenName;
     private String sex;
-    private String birthTime;
+    private String officialName;
     private String regno;
     private String ems;
     private int litterId;
     private int id;
     ArrayList<Weight> weightList = new ArrayList<>();
 
-    public Kitten(String kittenName, String sex, String birthTime) {
+    public Kitten(String kittenName, String sex, String officialName) {
         this.kittenName = kittenName;
         this.sex = sex;
-        this.birthTime = birthTime;
+        this.officialName = this.officialName;
 
     }
 
-    public Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId) {
+    public Kitten(String kittenName, String sex, String officialName, String regno, String ems, int litterId) {
         this.litterId = litterId;
         this.kittenName = kittenName;
         this.sex = sex;
-        this.birthTime = birthTime;
+        this.officialName = officialName;
         this.regno = regno;
         this.ems = ems;
     }
 
-    public Kitten(String kittenName, String sex, String birthTime, String regno, String ems, int litterId, int kittenId) {
+    public Kitten(String kittenName, String sex, String officialName, String regno, String ems, int litterId, int kittenId) {
         this.id = kittenId;
         this.litterId = litterId;
         this.kittenName = kittenName;
         this.sex = sex;
-        this.birthTime = birthTime;
+        this.officialName = officialName;
         this.regno = regno;
         this.ems = ems;
     }
@@ -56,8 +56,8 @@ public class Kitten {
         return sex;
     }
 
-    public String getBirthTime() {
-        return birthTime;
+    public String getOfficialName() {
+        return officialName;
     }
 
     public String getRegno() {

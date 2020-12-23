@@ -28,6 +28,9 @@ public class DatePickerFormField {
     public DatePickerFormField(String name, boolean isRequired, int width) {
         nameLabel = new Label(name);
         field = new DatePicker();
+        field.getEditor().setDisable(true);
+        field.setStyle("-fx-opacity: 1");
+        field.getEditor().setStyle("-fx-opacity: 1");
         this.isRequired = isRequired;
         errorLabel = new Label("");
         //grid.setGridLinesVisible(true);
@@ -65,7 +68,7 @@ public class DatePickerFormField {
         // Java fx DatePickerin bugi. Siksi date otetaan tekstistä.
         return field.getConverter().fromString(field.getEditor().getText());
     }
-    
+
     public void setValue(LocalDate value) {
         field.setValue(value);
     }

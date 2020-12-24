@@ -10,6 +10,8 @@ Asenna [Java FX](https://www.oracle.com/java/technologies/install-javafx-sdk.htm
 
 Asenna [SQLite](https://sqlite.org/index.html)
 
+Asenna [Maven](https://maven.apache.org/)
+
 Luo tietokanta ja taulut. Sql-skripti on tiedostossa CreateTables.sql
 
 ```sh

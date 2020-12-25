@@ -6,8 +6,6 @@ Ohjelma on työkalu kissankasvattajalle. Ohjelma seuraa tiineysajan kestoa ja sy
 
 Asenna [Java 11](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 
-Asenna [Java FX](https://www.oracle.com/java/technologies/install-javafx-sdk.html)
-
 Asenna [SQLite](https://sqlite.org/index.html)
 
 Asenna [Maven](https://maven.apache.org/)
@@ -27,4 +25,9 @@ Käynnistä ohjelma
 $ cd ..
 $ mvn clean package
 $ java -jar target/KittenGrowthCurve-1.0-SNAPSHOT.jar
+```
+
+Luo suoritettava ohjelma OSX:lle
+```sh
+$ mvn package appbundle:bundle
 ```

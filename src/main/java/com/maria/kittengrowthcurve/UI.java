@@ -98,7 +98,6 @@ public class UI {
                 diaryButton.setOnMouseClicked((diaryEvent) -> {
                     stage.getScene().setRoot(getDiaryPage(litter, null));
                 });
-                topButtonsHbox.getChildren().addAll(diaryButton);
             }
         });
         
@@ -111,10 +110,10 @@ public class UI {
                     diaryButton.setOnMouseClicked((event) -> {
                         stage.getScene().setRoot(getDiaryPage(litter, null));
                     });
-                    topButtonsHbox.getChildren().addAll(diaryButton);
                 }
             }
         }
+        topButtonsHbox.getChildren().addAll(diaryButton);
         topButtonsHbox.getChildren().addAll(comboBox);
         initialLayout.setTop(topButtonsHbox);
         

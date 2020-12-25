@@ -96,7 +96,7 @@ public class KittenService {
         Connection conn = null;
         try {
             Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection("jdbc:sqlite:sql/kittenGrowthCurve.db");
+            conn = DriverManager.getConnection("jdbc:sqlite::resource:sql/kittenGrowthCurve.db");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

@@ -1,6 +1,6 @@
 # KittenGrowthcurve
 
-Ohjelma on työkalu kissankasvattajalle. Ohjelma seuraa tiineysajan kestoa ja synnytyksen jälkeen pentujen painonkehitystä luovutusikään (14vk) saakka. Ohjelma tuottaa pennuille kasvukäyrät, joita voi tarkastella yksittäin, pentueittain tai useampaa pentuetta keskenään vertaamalla. Lisäksi pentueella on päiväkirja, jonne voi lisätä muistiinpanoja. Päiväkirja laskee pentujen iän automaattisesti jokaiseen merkintään. 
+Ohjelma on työkalu kissankasvattajalle. Ohjelma seuraa pentujen painonkehitystä luovutusikään (14vk) saakka. Ohjelma tuottaa pennuille kasvukäyrät, joita voi tarkastella yksittäin, pentueittain tai useampaa pentuetta keskenään vertaamalla. Lisäksi pentueella on päiväkirja, jonne voi lisätä muistiinpanoja. Päiväkirja laskee pentujen iän automaattisesti jokaiseen merkintään. 
 
 ### Asennus
 

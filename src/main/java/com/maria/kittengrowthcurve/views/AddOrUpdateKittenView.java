@@ -34,7 +34,7 @@ public class AddOrUpdateKittenView {
     Button backButton = new Button("Takaisin");
     TextFormField nameOfKittenField = new TextFormField("Nimi", true);
     ComboBoxFormField sexComboBoxField = new ComboBoxFormField("Sukupuoli", true);
-    TextFormField birthTimeOfKittenField = new TextFormField("Virallinen nimi", false);
+    TextFormField officialNameOfKittenField = new TextFormField("Virallinen nimi", false);
     TextFormField weightOfKittenField = new TextFormField("Syntymäpaino", true);
     TextFormField regNoOfKittenField = new TextFormField("Rekisterinumero", false);
     TextFormField emsCodeOfKittenField = new TextFormField("EMS-koodi", false);
@@ -57,14 +57,14 @@ public class AddOrUpdateKittenView {
         if (kitten != null) {
             nameOfKittenField.setValue(kitten.getKittenName());
             sexComboBoxField.setValue(kitten.getSex());
-            birthTimeOfKittenField.setValue(kitten.getOfficialName());
+            officialNameOfKittenField.setValue(kitten.getOfficialName());
             weightOfKittenField.setValue(String.valueOf(kitten.getWeightList().get(0).getWeight()));
             regNoOfKittenField.setValue(kitten.getRegno());
             emsCodeOfKittenField.setValue(kitten.getEms());
         }
         gridPane.add(nameOfKittenField.getNode(), 0, 0);
         gridPane.add(sexComboBoxField.getNode(), 1, 0);
-        gridPane.add(birthTimeOfKittenField.getNode(), 0, 1);
+        gridPane.add(officialNameOfKittenField.getNode(), 0, 1);
         gridPane.add(weightOfKittenField.getNode(), 1, 1);
         gridPane.add(regNoOfKittenField.getNode(), 0, 2);
         gridPane.add(emsCodeOfKittenField.getNode(), 1, 2);
@@ -95,7 +95,7 @@ public class AddOrUpdateKittenView {
 
     public void clearFields() {
         nameOfKittenField.clear();
-        birthTimeOfKittenField.clear();
+        officialNameOfKittenField.clear();
         weightOfKittenField.clear();
         sexComboBoxField.clear();
     }
@@ -120,8 +120,8 @@ public class AddOrUpdateKittenView {
         return sexComboBoxField;
     }
 
-    public TextFormField getBirthTimeOfKittenField() {
-        return birthTimeOfKittenField;
+    public TextFormField getOfficialNameOfKittenField() {
+        return officialNameOfKittenField;
     }
 
     public TextFormField getWeightOfKittenField() {

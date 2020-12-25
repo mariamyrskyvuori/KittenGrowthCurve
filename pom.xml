@@ -148,6 +148,7 @@
                 </dependencies>
                 <configuration>
                     <mainClass>com.maria.kittengrowthcurve.Launcher</mainClass>
+                    <generateDiskImageFile>true</generateDiskImageFile>
                     <jrePath>/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/</jrePath>
                 </configuration>
                 <executions>

@@ -162,7 +162,7 @@ public class UI {
                     kittenId = service.updateKitten(kitten.getId(),
                             addOrUpdateKittenView.getNameOfKittenField().getValue(),
                             addOrUpdateKittenView.getSexComboBoxField().getValue(),
-                            addOrUpdateKittenView.getBirthTimeOfKittenField().getValue(),
+                            addOrUpdateKittenView.getOfficialNameOfKittenField().getValue(),
                             Integer.valueOf(addOrUpdateKittenView.getWeightOfKittenField().getValue()),
                             addOrUpdateKittenView.getRegNoOfKittenField().getValue(),
                             addOrUpdateKittenView.getEmsCodeOfKittenField().getValue(),
@@ -170,7 +170,7 @@ public class UI {
                 } else {
                     kittenId = service.addKitten(litterId, addOrUpdateKittenView.getNameOfKittenField().getValue(),
                             addOrUpdateKittenView.getSexComboBoxField().getValue(),
-                            addOrUpdateKittenView.getBirthTimeOfKittenField().getValue(),
+                            addOrUpdateKittenView.getOfficialNameOfKittenField().getValue(),
                             Integer.valueOf(addOrUpdateKittenView.getWeightOfKittenField().getValue()),
                             addOrUpdateKittenView.getRegNoOfKittenField().getValue(),
                             addOrUpdateKittenView.getEmsCodeOfKittenField().getValue(),

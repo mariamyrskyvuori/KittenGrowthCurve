@@ -31,7 +31,7 @@ public class AddLitterView {
     Label saveResultMessage = new Label("");
     TextFormField damField = new TextFormField("Emo", true);
     TextFormField sireField = new TextFormField("Isä", true);
-    TextFormField nameField = new TextFormField("Nimi", true);
+    TextFormField nameField = new TextFormField("Pentueen nimi", true);
     DatePickerFormField establishmentField = new DatePickerFormField("Astutuspäivä", true);
 
     public AddLitterView() {

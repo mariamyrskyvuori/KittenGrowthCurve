@@ -149,7 +149,9 @@ public class Litter {
         int i = 0;
         String emsKitten = "";
         while (i < kittens.size()) {
-            emsKitten = emsKitten + "\n" + kittens.get(i).getEms();
+            if (!kittens.get(i).getEms().isEmpty()) {
+                emsKitten = emsKitten + kittens.get(i).getEms() + "\n";
+            }
             i++;
         }
         return emsKitten;

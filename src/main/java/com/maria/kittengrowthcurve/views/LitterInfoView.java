@@ -9,8 +9,10 @@ import com.maria.kittengrowthcurve.domain.Kitten;
 import com.maria.kittengrowthcurve.domain.Litter;
 import java.sql.Array;
 import java.util.ArrayList;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -46,26 +48,26 @@ public class LitterInfoView {
     
     private void setContent() {
         ArrayList<Kitten> kittens = litter.getKittens();
-        addTextToGridPane(litter.getLitterName(), 0, 0, 20);
+        addTextToGridPane(litter.getLitterName(), 0, 0, 20, FontWeight.BOLD);
         addTextToGridPane("Syntymäaika:", 0, 1, 15, FontWeight.BOLD);
-        addTextToGridPane(litter.getBirth().toString(), 1, 1, 15);
+        addTextToGridPane(litter.getBirth().toString(), 1, 1, 1,1);
         addTextToGridPane("Luovutusaika:", 0, 2, 15, FontWeight.BOLD);
-        addTextToGridPane(litter.getDeliveryDate().toString(), 1, 2, 15);
+        addTextToGridPane(litter.getDeliveryDate().toString(), 1, 2, 1, 1);
         addTextToGridPane("Emo:", 2, 1, 15, FontWeight.BOLD);
-        addTextToGridPane(litter.getDam(), 3, 1, 15);
+        addTextToGridPane(litter.getDam(), 3, 1, 1, 1);
         addTextToGridPane("Isä:", 2, 2, 15, FontWeight.BOLD);
-        addTextToGridPane(litter.getSire(), 3, 2, 15);
+        addTextToGridPane(litter.getSire(), 3, 2, 1, 1);
         addTextToGridPane("Lukumäärä:", 4, 1, 15, FontWeight.BOLD);
-        addTextToGridPane(kittens != null ? String.valueOf(litter.getKittenCount()) : "", 5, 1, 15);
+        addTextToGridPane(kittens != null ? String.valueOf(litter.getKittenCount()) : "", 5, 1, 1, 1);
         addTextToGridPane("Uroksia:", 4, 2, 15, FontWeight.BOLD);
-        addTextToGridPane(kittens != null ? String.valueOf(litter.getMaleKittenCount()) : "", 5, 2, 15);
+        addTextToGridPane(kittens != null ? String.valueOf(litter.getMaleKittenCount()) : "", 5, 2, 1, 1);
         addTextToGridPane("Naaraita:", 4, 3, 15, FontWeight.BOLD);
-        addTextToGridPane(kittens != null ? String.valueOf(litter.getFemaleKittenCount()) : "", 5, 3, 15);
+        addTextToGridPane(kittens != null ? String.valueOf(litter.getFemaleKittenCount()) : "", 5, 3, 1, 1);
         addTextToGridPane("Värit:", 6, 1, 15, FontWeight.BOLD);
-        addTextToGridPane(kittens != null ? litter.getEmsKitten() : "", 7, 7, 15);
+        addTextToGridPane(kittens != null ? litter.getEmsKitten() : "", 7, 1, 1, 4);
                
-        addButtonToGridPane(editButton, 0, 5);
-        addButtonToGridPane(addKittenButton, 1, 5);
+        addButtonToGridPane(editButton, 0, 4, 1, 1);
+        addButtonToGridPane(addKittenButton, 1, 4, 2, 1);
     }
     
     private void setColWidths(int[] widths) {
@@ -74,8 +76,8 @@ public class LitterInfoView {
         }
     }
     
-    private void addButtonToGridPane(Button button, int col, int row) {
-        gridPane.add(button, col, row);
+    private void addButtonToGridPane(Button button, int col, int row, int colSpan, int rowSpan) {
+        gridPane.add(button, col, row, colSpan, rowSpan);
     }
     
     private void addTextToGridPane(String text, int col, int row, int fontSize, FontWeight fontWeight) {
@@ -84,8 +86,11 @@ public class LitterInfoView {
         gridPane.add(textNode, col, row);
     }
     
-    private void addTextToGridPane(String text, int col, int row, int fontSize) {
-        addTextToGridPane(text, col, row, fontSize, FontWeight.LIGHT);
+    private void addTextToGridPane(String text, int col, int row, int colSpan, int rowSpan) {
+        Text textNode = new Text(text);
+        textNode.setFont(Font.font("Arial"));
+        GridPane.setValignment(textNode, VPos.TOP);
+        gridPane.add(textNode, col, row, colSpan, rowSpan);
     }
     
     public GridPane getGridPane() {

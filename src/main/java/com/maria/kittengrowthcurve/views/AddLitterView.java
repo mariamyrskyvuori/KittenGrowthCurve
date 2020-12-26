@@ -26,11 +26,11 @@ public class AddLitterView {
     Litter litter;
     GridPane gridPane = new GridPane();
     BorderPane borderPane = new BorderPane();
-    Button saveButton = new Button("Lisää pentue");
+    Button saveButton = new Button("Tallenna");
     Button backButton = new Button("Takaisin");
     Label saveResultMessage = new Label("");
     TextFormField damField = new TextFormField("Emo", true);
-    TextFormField sireField = new TextFormField("Isä", true);
+    TextFormField sireField = new TextFormField("Uros", true);
     TextFormField nameField = new TextFormField("Pentueen nimi", true);
     DatePickerFormField establishmentField = new DatePickerFormField("Astutuspäivä", true);
 

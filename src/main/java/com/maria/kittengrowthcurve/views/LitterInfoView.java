@@ -31,7 +31,7 @@ public class LitterInfoView {
     
     Litter litter;
     GridPane gridPane = new GridPane();
-    Button editButton = new Button("Muokkaa");
+    Button editButton = new Button("Tarkastele");
     Button addKittenButton = new Button("Lisää pentu");
 
     public LitterInfoView(Litter litter) {
@@ -55,7 +55,7 @@ public class LitterInfoView {
         addTextToGridPane(litter.getDeliveryDate().toString(), 1, 2, 1, 1);
         addTextToGridPane("Emo:", 2, 1, 15, FontWeight.BOLD);
         addTextToGridPane(litter.getDam(), 3, 1, 1, 1);
-        addTextToGridPane("Isä:", 2, 2, 15, FontWeight.BOLD);
+        addTextToGridPane("Uros:", 2, 2, 15, FontWeight.BOLD);
         addTextToGridPane(litter.getSire(), 3, 2, 1, 1);
         addTextToGridPane("Lukumäärä:", 4, 1, 15, FontWeight.BOLD);
         addTextToGridPane(kittens != null ? String.valueOf(litter.getKittenCount()) : "", 5, 1, 1, 1);

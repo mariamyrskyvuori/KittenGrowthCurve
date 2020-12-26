@@ -28,7 +28,7 @@ public class HandleLittersAndKittensView {
     GridPane gridPane = new GridPane();
     Button updateLitterButton = new Button("Tallenna");
     TextFormField damField = new TextFormField("Emo", true);
-    TextFormField sireField = new TextFormField("Isä", true);
+    TextFormField sireField = new TextFormField("Uros", true);
     DatePickerFormField establishmentField = new DatePickerFormField("Astutuspäivä", true);
     DatePickerFormField birthField = new DatePickerFormField("Syntymäpäivä", true);
     TextFormField litterNameField = new TextFormField("Pentueen nimi", true);

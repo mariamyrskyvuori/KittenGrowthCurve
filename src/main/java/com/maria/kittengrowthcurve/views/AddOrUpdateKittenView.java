@@ -29,7 +29,7 @@ public class AddOrUpdateKittenView {
 
     BorderPane borderPane = new BorderPane();
     GridPane gridPane = new GridPane();
-    Button saveButton = new Button("Lisää pentu");
+    Button saveButton = new Button("Tallenna");
     Label saveResultMessage = new Label();
     Button backButton = new Button("Takaisin");
     TextFormField nameOfKittenField = new TextFormField("Nimi", true);

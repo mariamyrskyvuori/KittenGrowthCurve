@@ -35,7 +35,7 @@ public class AddOrUpdateKittenView {
     TextFormField nameOfKittenField = new TextFormField("Nimi", true);
     ComboBoxFormField sexComboBoxField = new ComboBoxFormField("Sukupuoli", true);
     TextFormField officialNameOfKittenField = new TextFormField("Virallinen nimi", false);
-    TextFormField weightOfKittenField = new TextFormField("Syntymäpaino", true);
+    //TextFormField weightOfKittenField = new TextFormField("Syntymäpaino", true);
     TextFormField regNoOfKittenField = new TextFormField("Rekisterinumero", false);
     TextFormField emsCodeOfKittenField = new TextFormField("EMS-koodi", false);
 
@@ -58,16 +58,14 @@ public class AddOrUpdateKittenView {
             nameOfKittenField.setValue(kitten.getKittenName());
             sexComboBoxField.setValue(kitten.getSex());
             officialNameOfKittenField.setValue(kitten.getOfficialName());
-            weightOfKittenField.setValue(String.valueOf(kitten.getWeightList().get(0).getWeight()));
             regNoOfKittenField.setValue(kitten.getRegno());
             emsCodeOfKittenField.setValue(kitten.getEms());
         }
         gridPane.add(nameOfKittenField.getNode(), 0, 0);
         gridPane.add(sexComboBoxField.getNode(), 1, 0);
         gridPane.add(officialNameOfKittenField.getNode(), 0, 1);
-        gridPane.add(weightOfKittenField.getNode(), 1, 1);
         gridPane.add(regNoOfKittenField.getNode(), 0, 2);
-        gridPane.add(emsCodeOfKittenField.getNode(), 1, 2);
+        gridPane.add(emsCodeOfKittenField.getNode(), 1, 1);
         addButtonToGridPane(saveButton, 1, 3);
         gridPane.add(saveResultMessage, 0, 4);
     }
@@ -88,15 +86,15 @@ public class AddOrUpdateKittenView {
     public boolean isValid() {
         boolean isValidNameOfKittenField = nameOfKittenField.isValid();
         boolean isValidsexBox = sexComboBoxField.isValid();
-        boolean isValidWeightOfKittenField = weightOfKittenField.isValid();
+        //boolean isValidWeightOfKittenField = weightOfKittenField.isValid();
 
-        return isValidNameOfKittenField && isValidsexBox && isValidWeightOfKittenField;
+        return isValidNameOfKittenField && isValidsexBox;
     }
 
     public void clearFields() {
         nameOfKittenField.clear();
         officialNameOfKittenField.clear();
-        weightOfKittenField.clear();
+        //weightOfKittenField.clear();
         sexComboBoxField.clear();
     }
 
@@ -123,11 +121,11 @@ public class AddOrUpdateKittenView {
     public TextFormField getOfficialNameOfKittenField() {
         return officialNameOfKittenField;
     }
-
+/*
     public TextFormField getWeightOfKittenField() {
         return weightOfKittenField;
     }
-
+*/
     public TextFormField getRegNoOfKittenField() {
         return regNoOfKittenField;
     }

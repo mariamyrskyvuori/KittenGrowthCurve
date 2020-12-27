@@ -46,7 +46,7 @@ public class UIUtils {
         gridPane.setPadding(new Insets(5, 5, 5, 5));
         gridPane.maxWidth(450);
         gridPane.maxHeight(500);
-        gridPane = setColWidthsToGridPane(new int[]{80, 220, 110}, gridPane);
+        gridPane = setColWidthsToGridPane(new int[]{80, 200, 80, 80}, gridPane);
         return gridPane;
     }
     

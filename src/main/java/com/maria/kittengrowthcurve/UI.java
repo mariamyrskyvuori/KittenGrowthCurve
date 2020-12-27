@@ -34,6 +34,9 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleButton;
@@ -66,26 +69,26 @@ public class UI {
     //alkunäkymä
     private BorderPane getInitialLayout() {
         HBox topButtonsHbox = getInitialHBox();
-        
+
         Button addLitter = new Button("Lisää pentue");
         topButtonsHbox.getChildren().addAll(addLitter);
-        
+
         addLitter.setOnMouseClicked((event) -> {
             stage.getScene().setRoot(getAddLitterLayout());
         });
-        
+
         ArrayList<Litter> littersWithAllData = service.getAllDataFromDb();
         Button diaryButton = new Button("Päiväkirja");
         diaryButton.setAlignment(Pos.TOP_RIGHT);
         ComboBox<Litter> comboBox = new ComboBox<>();
         ObservableList<Litter> items = FXCollections.observableArrayList();
-        
+
         int i = 0;
         while (i < littersWithAllData.size()) {
             items.add(littersWithAllData.get(i));
             i++;
         }
-        
+
         comboBox.setItems(items);
         comboBox.setPromptText("Valitse pentue");
         comboBox.setOnAction((event) -> {
@@ -100,8 +103,12 @@ public class UI {
                 });
             }
         });
-        
-        if (activeLitterId != -1) {
+
+        if (activeLitterId == -1) {
+            initialLayout.setBottom(null);
+            initialLayout.setLeft(null);
+            initialLayout.setCenter(null);
+        } else {
             for (Litter litter : littersWithAllData) {
                 if (litter.getId() == activeLitterId) {
                     initialLayout.setBottom(getLitterInfoLayout(litter));
@@ -116,7 +123,7 @@ public class UI {
         topButtonsHbox.getChildren().addAll(diaryButton);
         topButtonsHbox.getChildren().addAll(comboBox);
         initialLayout.setTop(topButtonsHbox);
-        
+
         return initialLayout;
     }
 
@@ -138,7 +145,7 @@ public class UI {
                 addLitterView.setSaveResultMessage("Ei onnistunut!");
             }
         });
-        
+
         addLitterView.getBackButton().setOnMouseClicked((event) -> {
             stage.getScene().setRoot(getInitialLayout());
         });
@@ -149,21 +156,20 @@ public class UI {
     //näkymä pentujen lisäämistä varten
     private BorderPane getAddOrUpdateKittenPage(int litterId, LocalDate birth, Kitten kitten) {
         AddOrUpdateKittenView addOrUpdateKittenView = new AddOrUpdateKittenView(litterId, kitten);
-        
         addOrUpdateKittenView.getBackButton().setOnMouseClicked((event) -> {
             stage.getScene().setRoot(getInitialLayout());
         });
-        
+
         addOrUpdateKittenView.getSaveButton().setOnMouseClicked((event) -> {
             int kittenId = -1;
-            
+
             if (addOrUpdateKittenView.isValid()) {
                 if (kitten != null) {
                     kittenId = service.updateKitten(kitten.getId(),
                             addOrUpdateKittenView.getNameOfKittenField().getValue(),
                             addOrUpdateKittenView.getSexComboBoxField().getValue(),
                             addOrUpdateKittenView.getOfficialNameOfKittenField().getValue(),
-                            Integer.valueOf(addOrUpdateKittenView.getWeightOfKittenField().getValue()),
+                            //Integer.valueOf(addOrUpdateKittenView.getWeightOfKittenField().getValue()),
                             addOrUpdateKittenView.getRegNoOfKittenField().getValue(),
                             addOrUpdateKittenView.getEmsCodeOfKittenField().getValue(),
                             birth);
@@ -171,13 +177,13 @@ public class UI {
                     kittenId = service.addKitten(litterId, addOrUpdateKittenView.getNameOfKittenField().getValue(),
                             addOrUpdateKittenView.getSexComboBoxField().getValue(),
                             addOrUpdateKittenView.getOfficialNameOfKittenField().getValue(),
-                            Integer.valueOf(addOrUpdateKittenView.getWeightOfKittenField().getValue()),
+                            //Integer.valueOf(addOrUpdateKittenView.getWeightOfKittenField().getValue()),
                             addOrUpdateKittenView.getRegNoOfKittenField().getValue(),
                             addOrUpdateKittenView.getEmsCodeOfKittenField().getValue(),
                             birth);
                 }
             }
-            
+
             if (kittenId != -1 && kittenId != -2) {
                 addOrUpdateKittenView.setSaveResultMessage("Onnistui!");
                 addOrUpdateKittenView.clearFields();
@@ -185,22 +191,22 @@ public class UI {
                 addOrUpdateKittenView.setSaveResultMessage("Ei onnistunut!");
             }
         });
-        
+
         return addOrUpdateKittenView.getBorderPane();
     }
 
     //näkymä pentueen tiedoista
     private Node getLitterInfoLayout(Litter litter) {
         LitterInfoView litterInfoView = new LitterInfoView(litter);
-        
+
         litterInfoView.getAddKittenButton().setOnMouseClicked((event) -> {
             stage.getScene().setRoot(getAddOrUpdateKittenPage(litter.getId(), litter.getBirth(), null));
         });
-        
+
         litterInfoView.getEditButton().setOnMouseClicked((event) -> {
             stage.getScene().setRoot(getHandleLittersAndKittensPage(litter));
         });
-        
+
         return litterInfoView.getGridPane();
     }
 
@@ -208,7 +214,7 @@ public class UI {
     private Node getKittenInfoLayout(Litter litter) {
         ArrayList<Kitten> kittens = litter.getKittens();
         GridPane gridPane = new KittenInfoView().getGridPane();
-        
+
         for (int i = 0; i < kittens.size(); i++) {
             Text kittenName = new Text(kittens.get(i).getKittenName());
             kittenName.setFont(Font.font("Arial", FontWeight.BOLD, 15));
@@ -222,7 +228,7 @@ public class UI {
             boolean isSelected = hiddenKittensIds.contains(kitten.getId());
             ToggleButton showButton = new ToggleButton(isSelected ? "näytä" : "piilota");
             showButton.setSelected(isSelected);
-            
+
             gridPane.add(showButton, 2, 1 + i);
             showButton.setOnMouseClicked((event) -> {
                 if (showButton.isSelected()) {
@@ -236,7 +242,7 @@ public class UI {
                 }
             });
         }
-        
+
         return gridPane;
     }
 
@@ -246,11 +252,11 @@ public class UI {
         weightKittenView.getBorderPane().setCenter(getAllWeightsForKittenLayout(kitten.getId(),
                 kitten.getWeightList(),
                 weightKittenView.getBorderPane()));
-        
+
         weightKittenView.getBackButton().setOnMouseClicked((event) -> {
             stage.getScene().setRoot(getInitialLayout());
         });
-        
+
         weightKittenView.getSaveWeightButton().setOnMouseClicked((event) -> {
             if (weightKittenView.isValid()) {
                 int weight = Integer.valueOf(weightKittenView.getWeigthField().getValue());
@@ -266,13 +272,13 @@ public class UI {
                 }
             }
         });
-        
+
         return weightKittenView.getBorderPane();
     }
 
     private BorderPane getHandleLittersAndKittensPage(Litter litter) {
         HandleLittersAndKittensView handleLittersAndKittensView = new HandleLittersAndKittensView(litter);
-        
+
         handleLittersAndKittensView.getUpdateLitterButton().setOnMouseClicked((event) -> {
             String dam = handleLittersAndKittensView.getDamField().getValue();
             String sire = handleLittersAndKittensView.getSireField().getValue();
@@ -280,7 +286,7 @@ public class UI {
             LocalDate birth = handleLittersAndKittensView.getBirthField().getValue();
             String litterName = handleLittersAndKittensView.getLitterNameField().getValue();
             boolean successful = false;
-            
+
             if (handleLittersAndKittensView.isValid()) {
                 successful = service.updateLitter(dam, sire, establishmentDate, birth, litterName, litter.getId());
             }
@@ -290,54 +296,81 @@ public class UI {
                 handleLittersAndKittensView.setSaveResultMessage("Ei onnistunut!");
             }
         });
-        
-        handleLittersAndKittensView.getBorderPane().setCenter(getAllDataForKittens(litter));
-        
+
+        handleLittersAndKittensView.getRemoveLitterButton().setOnMouseClicked((event) -> {
+            Alert alert = new Alert(AlertType.CONFIRMATION, "Poistetaanko pentue?", ButtonType.YES, ButtonType.NO);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.YES) {
+                boolean removeSuccessful = service.removeLitter(litter.getId());
+                if (removeSuccessful) {
+                    activeLitterId = -1;
+                    stage.getScene().setRoot(getInitialLayout());
+                }
+            }
+
+        });
+
+        handleLittersAndKittensView.getBorderPane().setCenter(getAllDataForKittens(litter, handleLittersAndKittensView));
+
         handleLittersAndKittensView.getBackButton().setOnMouseClicked((event) -> {
             stage.getScene().setRoot(getInitialLayout());
         });
-        
+
         return handleLittersAndKittensView.getBorderPane();
     }
 
     //Listaa kaikki pentujen tiedot. Tarvitaan pentujen muokkaamiseen.
-    private Node getAllDataForKittens(Litter litter) {
+    private Node getAllDataForKittens(Litter litter, HandleLittersAndKittensView handleLittersAndKittensView) {
+
         FlowPane kittensPane = new FlowPane(Orientation.VERTICAL, 20.0, 20.0);
         kittensPane.setPadding(new Insets(20, 30, 10, 30));
-        ArrayList<Kitten> kittens = litter.getKittens();
-        
+        //ArrayList<Kitten> kittens = litter.getKittens();
+        ArrayList<Kitten> kittens = service.getKittensByLitterId(litter.getId());
+
         for (int i = 0; i < kittens.size(); i++) {
             final Kitten kitten = kittens.get(i);
-            GridPane allKittens = new GridPane();
-            Button mode = new Button("Muokkaa");
-            allKittens.add(new Text(kitten.getKittenName()), 0, 1 + i);
-            allKittens.add(new Text(kitten.getOfficialName()), 1, 1 + i);
-            allKittens.add(new Text(kitten.getSex()), 2, 1 + i);
-            allKittens.add(new Text(kitten.getRegno()), 3, 1 + i);
-            allKittens.add(new Text(kitten.getEms()), 4, 1 + i);
-            allKittens.add(mode, 5, 1 + i);
-            allKittens.setHgap(10);
-            allKittens = setColWidthsToGridPane(new int[]{80, 250, 40, 100, 100}, allKittens);
-            mode.setOnMouseClicked((event) -> {
+            GridPane allKittenInfo = new GridPane();
+            Button modeButton = new Button("Muokkaa");
+            Button removeButton = new Button("Poista");
+            allKittenInfo.add(new Text(kitten.getKittenName()), 0, 1 + i);
+            allKittenInfo.add(new Text(kitten.getOfficialName()), 1, 1 + i);
+            allKittenInfo.add(new Text(kitten.getSex()), 2, 1 + i);
+            allKittenInfo.add(new Text(kitten.getRegno()), 3, 1 + i);
+            allKittenInfo.add(new Text(kitten.getEms()), 4, 1 + i);
+            allKittenInfo.add(modeButton, 5, 1 + i);
+            allKittenInfo.add(removeButton, 6, 1 + i);
+            allKittenInfo.setHgap(10);
+            allKittenInfo = setColWidthsToGridPane(new int[]{80, 250, 40, 100, 100}, allKittenInfo);
+            modeButton.setOnMouseClicked((event) -> {
                 stage.getScene().setRoot(getAddOrUpdateKittenPage(litter.getId(), litter.getBirth(), kitten));
             });
-            kittensPane.getChildren().add(allKittens);
+            removeButton.setOnMouseClicked((event) -> {
+                Alert alert = new Alert(AlertType.CONFIRMATION, "Poistetaanko pentu?", ButtonType.YES, ButtonType.NO);
+                alert.showAndWait();
+                if (alert.getResult() == ButtonType.YES) {
+                    boolean removeSuccessful = service.removeKitten(kitten.getId());
+                    if (removeSuccessful) {
+                        handleLittersAndKittensView.getBorderPane().setCenter(getAllDataForKittens(litter, handleLittersAndKittensView));
+                    }
+                }
+            });
+            kittensPane.getChildren().add(allKittenInfo);
         }
-        
+
         return kittensPane;
     }
 
     //Listaa pennun kaikki painot. Tarvitaan painojen muokkaamiseen.
     public Node getAllWeightsForKittenLayout(Integer kittenId, ArrayList<Weight> weightList, BorderPane handleWeightsPane) {
-        
+
         if (weightList == null) {
             weightList = service.getKittenWeightsByKittenId(kittenId);
         }
-        
+
         FlowPane weightsOfKitten = new FlowPane(Orientation.VERTICAL, 20.0, 20.0);
         weightsOfKitten.setPadding(new Insets(20, 30, 10, 30));
         weightList.sort(Comparator.comparing(Weight::getDate));
-        
+
         for (Weight weight : weightList) {
             GridPane allWeights = new GridPane();
             allWeights.setHgap(10);
@@ -352,25 +385,25 @@ public class UI {
             allWeights.add(mode, 2, 0);
             weightsOfKitten.getChildren().add(allWeights);
         }
-        
+
         return weightsOfKitten;
     }
 
     private BorderPane getDiaryPage(Litter litter, Diary activeDiary) {
         DiaryView diaryView = new DiaryView(litter, activeDiary);
-        
+
         if (activeDiary != null) {
             diaryView.getDiaryDateField().setValue(activeDiary.getDate());
             diaryView.getDiaryText().setText(activeDiary.getText());
         } else {
             diaryView.getDiaryText().setText("Kirjoita tähän");
         }
-        
+
         diaryView.getUpdateButton().setOnMouseClicked((event) -> {
             boolean isValidDiaryDateField = diaryView.getDiaryDateField().isValid();
             LocalDate diaryDate = diaryView.getDiaryDateField().getValue();
             boolean successful = false;
-            
+
             if (isValidDiaryDateField) {
                 if (activeDiary != null) {
                     successful = service.updateDiary(diaryDate, diaryView.getDiaryText().getText(), activeDiary.getId());
@@ -385,57 +418,62 @@ public class UI {
                 diaryView.setSaveResultMessage("Ei onnistunut!");
             }
         });
-        
+
         diaryView.gethBox().getChildren().addAll(getWholeDiaryLayout(litter,
                 service.getWholeDiaryByLitterId(litter.getId()),
                 diaryView.getBorderPane()));
-        
+
         diaryView.getBackButton().setOnMouseClicked((event) -> {
             stage.getScene().setRoot(getInitialLayout());
         });
-        
+
         return diaryView.getBorderPane();
     }
 
     //Listaa kaikki päiväkirjamerkinnät
     private Node getWholeDiaryLayout(Litter litter, ArrayList<Diary> diaryList, BorderPane diaryBorderPane) {
-        
+
         if (diaryList == null) {
             int litterId = litter.getId();
             diaryList = service.getWholeDiaryByLitterId(litterId);
         }
-    
+
         FlowPane diaryOfLitter = getDiaryFlowPane();
         final ScrollPane scrollDiary = getDiaryScrollPane();
         scrollDiary.setContent(diaryOfLitter);
-        
+
         scrollDiary.viewportBoundsProperty().addListener((ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) -> {
             diaryOfLitter.setPrefWidth(450);
             diaryOfLitter.setPrefHeight(bounds.getHeight());
         });
 
         diaryList.sort(Comparator.comparing(Diary::getDate));
-        
+
         for (Diary diary : diaryList) {
-            GridPane allDiaries = getDiaryGridPane();            
+            GridPane allDiaries = getDiaryGridPane();
             Text date = new Text(diary.getDate().toString());
             Text ageField = new Text("Pentujen ikä: " + getAge(litter.getBirth(), diary.getDate()) + " päivää.");
             Text textField = new Text("" + diary.getText());
             textField.setWrappingWidth(410);
-            Button mode = new Button("Muokkaa");
-            mode.setOnMouseClicked((event) -> {
+            Button modeDiaryButton = new Button("Muokkaa");
+            Button deleteDiaryButton = new Button("Poista");
+            modeDiaryButton.setOnMouseClicked((event) -> {
                 stage.getScene().setRoot(getDiaryPage(litter, diary));
+            });
+            deleteDiaryButton.setOnMouseClicked((event) -> {
+                service.removeDiaryById(diary.getId());
+                stage.getScene().setRoot(getDiaryPage(litter, null));
             });
             allDiaries.add(date, 0, 0);
             allDiaries.add(ageField, 1, 0);
-            allDiaries.add(mode, 2, 0);
+            allDiaries.add(modeDiaryButton, 2, 0);
+            allDiaries.add(deleteDiaryButton, 3, 0);
             allDiaries.add(textField, 0, 1, 3, 1);
             diaryOfLitter.getChildren().add(allDiaries);
         }
-        
+
         return scrollDiary;
     }
-
 
     private int getAge(LocalDate birthDate, LocalDate weighDate) {
         return (int) ChronoUnit.DAYS.between(birthDate, weighDate);
@@ -445,7 +483,7 @@ public class UI {
         Map<String, Map<Integer, Integer>> weightCurve = new HashMap();
         for (Kitten kitten : litter.getKittens()) {
             Map<Integer, Integer> weightMap = new HashMap();
-            
+
             for (Weight weight : kitten.getWeightList()) {
                 weightMap.put(getAge(litter.getBirth(), weight.getDate()), weight.getWeight());
             }
@@ -470,7 +508,7 @@ public class UI {
             });
             weightCurveChart.getData().add(data);
         });
-        
+
         return weightCurveChart;
     }
 }

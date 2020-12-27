@@ -27,6 +27,7 @@ public class HandleLittersAndKittensView {
     BorderPane borderPane = new BorderPane();
     GridPane gridPane = new GridPane();
     Button updateLitterButton = new Button("Tallenna");
+    Button removeLitterButton = new Button("Poista");
     TextFormField damField = new TextFormField("Emo", true);
     TextFormField sireField = new TextFormField("Uros", true);
     DatePickerFormField establishmentField = new DatePickerFormField("Astutuspäivä", true);
@@ -52,6 +53,7 @@ public class HandleLittersAndKittensView {
         gridPane.setHgap(10);
         gridPane.setPadding(new Insets(20, 30, 10, 30));
         gridPane.add(updateLitterButton, 2, 1);
+        gridPane.add(removeLitterButton, 3, 1);
         setContentToGridPane();
         setContentToBorderPane();
 
@@ -92,6 +94,10 @@ public class HandleLittersAndKittensView {
         return backButton;
     }
     
+    public Button getRemoveLitterButton() {
+        return removeLitterButton;
+    }
+    
     public Button getUpdateLitterButton() {
         return updateLitterButton;
     }
@@ -118,11 +124,4 @@ public class HandleLittersAndKittensView {
     public void setSaveResultMessage(String saveResultMessage) {
         this.saveResultMessage.setText(saveResultMessage);
     }
-
-    public Object litterNameField() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    
-
 }

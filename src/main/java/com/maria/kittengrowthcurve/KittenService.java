@@ -4,6 +4,7 @@ import com.maria.kittengrowthcurve.domain.Diary;
 import com.maria.kittengrowthcurve.domain.Kitten;
 import com.maria.kittengrowthcurve.domain.Litter;
 import com.maria.kittengrowthcurve.domain.Weight;
+import com.maria.kittengrowthcurve.util.DbUtils;
 import java.util.ArrayList;
 import java.sql.*;
 import java.time.LocalDate;
@@ -13,6 +14,18 @@ import java.time.LocalDate;
  * @author maria
  */
 public class KittenService {
+    
+    public KittenService() {
+        DbUtils.createSqlFolderIfNotExist();
+        try (Connection conn = this.connect();  Statement stmt = conn.createStatement()) {
+            stmt.execute(DbUtils.getSqlForCreateLitterTableIfNotExists());
+            stmt.execute(DbUtils.getSqlForCreateKittenTableIfNotExists());
+            stmt.execute(DbUtils.getSqlForCreateWeightTableIfNotExists());
+            stmt.execute(DbUtils.getSqlForCreateDiaryTableIfNotExists());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public boolean addLitter(String dam, String sire, String litterName, LocalDate establishmentDate) {
         Litter litter = new Litter(dam, sire, litterName, establishmentDate);
@@ -96,19 +109,19 @@ public class KittenService {
         Connection conn = null;
         try {
             Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection("jdbc:sqlite::resource:sql/kittenGrowthCurve.db");
+            conn = DriverManager.getConnection("jdbc:sqlite:sql/kittenGrowthCurve.db");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return conn;
     }
 
-    public int addKitten(int litterId, String kittenName, String sex, String officialName, int weigth, String regno, String ems, LocalDate birth) {
+    public int addKitten(int litterId, String kittenName, String sex, String officialName, String regno, String ems, LocalDate birth) {
         Kitten kitten = new Kitten(kittenName, sex, officialName, regno, ems, litterId);
         int kittenId = addKittenToDb(kitten);
-        if (kittenId != -1) {
-            addWeight(kittenId, weigth, birth);
-        }
+        //if (kittenId != -1) {
+        //    addWeight(kittenId, weigth, birth);
+        //}
         return kittenId;
     }
 
@@ -156,6 +169,25 @@ public class KittenService {
             pstmt.close();
             conn.close();
             return kittens;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+    
+    ArrayList<Integer> getKittensIdsByLitterId(int litterId) {
+        String sql = "SELECT id FROM Kitten WHERE litter_id = ?";
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, litterId);
+            ResultSet rs = pstmt.executeQuery();
+            ArrayList<Integer> kittensIds = new ArrayList();
+            while (rs.next()) {
+                kittensIds.add(rs.getInt("id"));
+            }
+            rs.close();
+            pstmt.close();
+            conn.close();
+            return kittensIds;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
@@ -214,8 +246,108 @@ public class KittenService {
             return false;
         }
     }
+    
+    public Boolean removeWeightByKittenId(int kittenId) {
+        String sql = "DELETE FROM Weight WHERE kitten_id = ?";
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, kittenId);
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    public Boolean removeKitten(int id) {
+        removeWeightByKittenId(id);
+        String sql = "DELETE FROM Kitten WHERE id = ?";
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    public Boolean removeKittenByLitterId(int litterId) {
+        String sql = "DELETE FROM Kitten WHERE litter_id = ?";
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, litterId);
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    public Boolean removeDiaryById(int id) {
+        String sql = "DELETE FROM Diary WHERE id = ?";
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    public Boolean removeDiaryByLitterId(int litterId) {
+        String sql = "DELETE FROM Diary WHERE litter_id = ?";
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, litterId);
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     *
+     * @param id
+     * @param id
+     * @return
+     */
+    public Boolean removeLitter(int id) { 
+        
+        for (Integer kittenId : getKittensIdsByLitterId(id)) {
+            removeWeightByKittenId(kittenId);
+        }
+        
+        
+        removeKittenByLitterId(id);
+        removeDiaryByLitterId(id);
+        
+        String sql = "DELETE FROM Litter WHERE Litter.id = ?";
+        try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            conn.close();
+            pstmt.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 
-    public int updateKitten(int kittenId, String kittenName, String sex, String officialName, int weigth, String regno, String ems, LocalDate birth) {
+    public int updateKitten(int kittenId, String kittenName, String sex, String officialName, String regno, String ems, LocalDate birth) {
         String sql = "UPDATE Kitten SET name = ?, sex = ?,regNo = ?, emsCode= ?, officialName = ? WHERE id = ?";
         try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, kittenName);
@@ -307,4 +439,8 @@ public class KittenService {
             return null;
         }
     }
+
+    
+
+    
 }

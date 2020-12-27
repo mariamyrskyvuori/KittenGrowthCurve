@@ -27,7 +27,13 @@ $ mvn clean package
 $ java -jar target/KittenGrowthCurve-1.0-SNAPSHOT.jar
 ```
 
-Luo suoritettava ohjelma OSX:lle
+### Luo suoritettava ohjelma OSX:lle
+Laita Java11 SDK:n sijainti pom.xml -tiedostoon
 ```sh
-$ mvn package appbundle:bundle
+<jrePath>/polku/omalla/koneellasi/adoptopenjdk-11.jdk/</jrePath>
 ```
+Generoi KittenGrowthCurve-1.0-SNAPSHOT.dmg -tiedosto target -hakemistoon
+```sh
+$ mvn clean package appbundle:bundle
+```
+Kopioi KittenGrowthCurve.app omalle koneellesi ja suorita se

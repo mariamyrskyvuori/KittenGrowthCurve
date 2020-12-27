@@ -7,15 +7,11 @@ package com.maria.kittengrowthcurve.views;
 
 import com.maria.kittengrowthcurve.domain.Kitten;
 import com.maria.kittengrowthcurve.domain.Litter;
-import java.sql.Array;
 import java.util.ArrayList;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
@@ -50,7 +46,7 @@ public class LitterInfoView {
         ArrayList<Kitten> kittens = litter.getKittens();
         addTextToGridPane(litter.getLitterName(), 0, 0, 20, FontWeight.BOLD);
         addTextToGridPane("Syntymäaika:", 0, 1, 15, FontWeight.BOLD);
-        addTextToGridPane(litter.getBirth().toString(), 1, 1, 1,1);
+        addTextToGridPane(litter.getBirth().toString(), 1, 1, 1, 1);
         addTextToGridPane("Luovutusaika:", 0, 2, 15, FontWeight.BOLD);
         addTextToGridPane(litter.getDeliveryDate().toString(), 1, 2, 1, 1);
         addTextToGridPane("Emo:", 2, 1, 15, FontWeight.BOLD);

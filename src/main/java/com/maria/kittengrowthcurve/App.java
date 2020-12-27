@@ -15,7 +15,7 @@ public class App extends Application {
     //Luo käyttöliittymän luokan ja käynnistää ohjelman
     @Override
     public void start(Stage stage) throws IOException {
-        stage.setTitle("Kasvukäyrä");
+        stage.setTitle("KittenGrowthCurve");
         UI ui = new UI(stage);
         stage.setWidth(1024);
         stage.setHeight(768);

@@ -94,8 +94,9 @@ public class AddOrUpdateKittenView {
     public void clearFields() {
         nameOfKittenField.clear();
         officialNameOfKittenField.clear();
-        //weightOfKittenField.clear();
         sexComboBoxField.clear();
+        regNoOfKittenField.clear();
+        emsCodeOfKittenField.clear();
     }
 
     public Button getSaveButton() {

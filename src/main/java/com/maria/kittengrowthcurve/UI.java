@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -66,7 +65,11 @@ public class UI {
         stage.show();
     }
 
-    //alkunäkymä
+    
+    /**
+     * <p>Luo alkunäkymän ja pyytää KittenServiceltä kaiken tietokannan tiedon pentueista, pennuista ja painoista</p>
+     * @return 
+     */
     private BorderPane getInitialLayout() {
         HBox topButtonsHbox = getInitialHBox();
 
@@ -275,7 +278,7 @@ public class UI {
 
         return weightKittenView.getBorderPane();
     }
-
+    //näkymä pentueen ja pentujen muokkaamiseen
     private BorderPane getHandleLittersAndKittensPage(Litter litter) {
         HandleLittersAndKittensView handleLittersAndKittensView = new HandleLittersAndKittensView(litter);
 
@@ -324,7 +327,6 @@ public class UI {
 
         FlowPane kittensPane = new FlowPane(Orientation.VERTICAL, 20.0, 20.0);
         kittensPane.setPadding(new Insets(20, 30, 10, 30));
-        //ArrayList<Kitten> kittens = litter.getKittens();
         ArrayList<Kitten> kittens = service.getKittensByLitterId(litter.getId());
 
         for (int i = 0; i < kittens.size(); i++) {
@@ -388,7 +390,7 @@ public class UI {
 
         return weightsOfKitten;
     }
-
+    //Näkymä päiväkirjan käsittelemiseen
     private BorderPane getDiaryPage(Litter litter, Diary activeDiary) {
         DiaryView diaryView = new DiaryView(litter, activeDiary);
 
@@ -474,11 +476,11 @@ public class UI {
 
         return scrollDiary;
     }
-
+    //Laskee pennuille iän
     private int getAge(LocalDate birthDate, LocalDate weighDate) {
         return (int) ChronoUnit.DAYS.between(birthDate, weighDate);
     }
-
+    //Luo painokäyrän
     private Node getWeightCurveLayout(Litter litter) {
         Map<String, Map<Integer, Integer>> weightCurve = new HashMap();
         for (Kitten kitten : litter.getKittens()) {

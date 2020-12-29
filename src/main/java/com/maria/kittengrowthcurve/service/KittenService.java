@@ -1,4 +1,4 @@
-package com.maria.kittengrowthcurve;
+package com.maria.kittengrowthcurve.service;
 
 import com.maria.kittengrowthcurve.domain.Diary;
 import com.maria.kittengrowthcurve.domain.Kitten;
@@ -14,10 +14,13 @@ import java.time.LocalDate;
  * @author maria
  */
 public class KittenService {
+    String pathToDb;
     /**
      * <p>Luo ohjelmiston käyttämän SQLite-tietokannan, kun ohjelmisto otetaan käyttöön ensimmäisen kerran</p>
+     * @param pathToDb
      */
-    public KittenService() {
+    public KittenService(String pathToDb) {
+        this.pathToDb = pathToDb;
         DbUtils.createSqlFolderIfNotExist();
         try (Connection conn = this.connect();  Statement stmt = conn.createStatement()) {
             stmt.execute(DbUtils.getSqlForCreateLitterTableIfNotExists());
@@ -139,7 +142,7 @@ public class KittenService {
         Connection conn = null;
         try {
             Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection("jdbc:sqlite:sql/kittenGrowthCurve.db");
+            conn = DriverManager.getConnection("jdbc:sqlite:" + pathToDb);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -196,7 +199,7 @@ public class KittenService {
      * @param litterId
      * @return ArrayList pennuista
      */
-    ArrayList<Kitten> getKittensByLitterId(int litterId) {
+    public ArrayList<Kitten> getKittensByLitterId(int litterId) {
         String sql = "SELECT * FROM Kitten WHERE litter_id = ?";
         try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, litterId);
@@ -226,7 +229,7 @@ public class KittenService {
      * @param litterId
      * @return ArrayList pentujen id:stä
      */
-    ArrayList<Integer> getKittensIdsByLitterId(int litterId) {
+    public ArrayList<Integer> getKittensIdsByLitterId(int litterId) {
         String sql = "SELECT id FROM Kitten WHERE litter_id = ?";
         try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, litterId);
@@ -249,7 +252,7 @@ public class KittenService {
      * @param kittenId
      * @return ArrayList pennun painotiedoista
      */
-    ArrayList<Weight> getKittenWeightsByKittenId(int kittenId) {
+    public ArrayList<Weight> getKittenWeightsByKittenId(int kittenId) {
         String sql = "SELECT * FROM Weight WHERE kitten_id = ?";
         try (Connection conn = this.connect();  PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, kittenId);

@@ -24,7 +24,6 @@ import javafx.scene.text.FontWeight;
  * @author maria
  */
 public class DiaryView {
-
     Litter litter;
     Diary activeDiary;
     BorderPane borderPane = new BorderPane();

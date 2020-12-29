@@ -9,7 +9,6 @@ import com.maria.kittengrowthcurve.domain.Kitten;
 import com.maria.kittengrowthcurve.domain.Litter;
 import com.maria.kittengrowthcurve.formfields.ComboBoxFormField;
 import com.maria.kittengrowthcurve.formfields.TextFormField;
-import java.time.LocalDate;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -22,7 +21,6 @@ import javafx.scene.layout.GridPane;
  * @author maria
  */
 public class AddOrUpdateKittenView {
-
     Litter litter;
     Kitten kitten;
     int litterId;
@@ -86,7 +84,6 @@ public class AddOrUpdateKittenView {
     public boolean isValid() {
         boolean isValidNameOfKittenField = nameOfKittenField.isValid();
         boolean isValidsexBox = sexComboBoxField.isValid();
-        //boolean isValidWeightOfKittenField = weightOfKittenField.isValid();
 
         return isValidNameOfKittenField && isValidsexBox;
     }
@@ -122,11 +119,7 @@ public class AddOrUpdateKittenView {
     public TextFormField getOfficialNameOfKittenField() {
         return officialNameOfKittenField;
     }
-/*
-    public TextFormField getWeightOfKittenField() {
-        return weightOfKittenField;
-    }
-*/
+
     public TextFormField getRegNoOfKittenField() {
         return regNoOfKittenField;
     }
@@ -138,5 +131,4 @@ public class AddOrUpdateKittenView {
     public void setSaveResultMessage(String saveResultMessage) {
         this.saveResultMessage.setText(saveResultMessage);
     }
-
 }

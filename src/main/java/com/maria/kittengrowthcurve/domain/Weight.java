@@ -7,10 +7,7 @@ package com.maria.kittengrowthcurve.domain;
 
 import java.time.LocalDate;
 
-/**
- *
- * @author maria
- */
+
 public class Weight {
     
     private int id;
@@ -23,58 +20,26 @@ public class Weight {
         this.weight = weight;
     }
 
-    /**
-     * Get the value of weight
-     *
-     * @return the value of weight
-     */
     public int getWeight() {
         return weight;
     }
 
-    /**
-     * Set the value of weight
-     *
-     * @param weight new value of weight
-     */
     public void setWeight(int weight) {
         this.weight = weight;
     }
 
-
-    /**
-     * Get the value of id
-     *
-     * @return the value of id
-     */
     public int getId() {
         return id;
     }
 
-    /**
-     * Set the value of id
-     *
-     * @param id new value of id
-     */
     public void setId(int id) {
         this.id = id;
     }
 
-
-    /**
-     * Get the value of date
-     *
-     * @return the value of date
-     */
     public LocalDate getDate() {
         return date;
     }
 
-    /**
-     * Set the value of date
-     *
-     * @param date new value of date
-     */
     public void setDate(LocalDate date) {
         this.date = date;
     }

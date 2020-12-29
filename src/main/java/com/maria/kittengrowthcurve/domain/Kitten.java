@@ -26,7 +26,6 @@ public class Kitten {
         this.kittenName = kittenName;
         this.sex = sex;
         this.officialName = this.officialName;
-
     }
 
     public Kitten(String kittenName, String sex, String officialName, String regno, String ems, int litterId) {

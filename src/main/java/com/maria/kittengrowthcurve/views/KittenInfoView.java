@@ -5,11 +5,7 @@
  */
 package com.maria.kittengrowthcurve.views;
 
-import com.maria.kittengrowthcurve.domain.Kitten;
-import com.maria.kittengrowthcurve.domain.Litter;
-import java.util.ArrayList;
 import javafx.geometry.Insets;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;

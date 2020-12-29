@@ -39,8 +39,6 @@ public class HandleLittersAndKittensView {
     public HandleLittersAndKittensView(Litter litter) {
         Label litterName = new Label(litter.getLitterName());
         litterName.setFont(Font.font("Arial", FontWeight.BOLD, 15));
-        //BorderPane handleLittersAndKittensPane = new BorderPane();
-        //GridPane handleLittersLayout = new GridPane();
 
         damField.setValue(litter.getDam());
         sireField.setValue(litter.getSire());
@@ -56,7 +54,6 @@ public class HandleLittersAndKittensView {
         gridPane.add(removeLitterButton, 3, 1);
         setContentToGridPane();
         setContentToBorderPane();
-
     }
 
     

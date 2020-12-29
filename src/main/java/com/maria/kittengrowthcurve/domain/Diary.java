@@ -12,7 +12,6 @@ import java.time.LocalDate;
  * @author maria
  */
 public class Diary {
-
     private int id;
     private LocalDate date;
     private String text;

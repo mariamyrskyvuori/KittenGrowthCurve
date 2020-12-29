@@ -17,7 +17,6 @@ import javafx.scene.layout.Region;
  * @author maria
  */
 public class ComboBoxFormField {
-
     GridPane grid = new GridPane();
     Label nameLabel;
     ComboBox<String> field;
@@ -29,7 +28,6 @@ public class ComboBoxFormField {
         field = new ComboBox();
         errorLabel = new Label("");
         this.isRequired = isRequired;
-        //grid.setGridLinesVisible(true);
         grid.setPrefSize(width, 30);
         grid.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         grid.setVgap(1);

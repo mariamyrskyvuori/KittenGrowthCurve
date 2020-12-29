@@ -17,7 +17,6 @@ import javafx.scene.layout.Region;
  * @author maria
  */
 public class TextFormField {
-
     GridPane grid = new GridPane();
     Label nameLabel;
     TextField field;
@@ -29,7 +28,6 @@ public class TextFormField {
         field = new TextField();
         errorLabel = new Label("");
         this.isRequired = isRequired;
-        //grid.setGridLinesVisible(true);
         grid.setPrefSize(width, 30);
         grid.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         grid.setVgap(1);

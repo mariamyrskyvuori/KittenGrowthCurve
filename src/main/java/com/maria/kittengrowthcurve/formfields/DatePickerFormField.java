@@ -18,7 +18,6 @@ import javafx.scene.layout.Region;
  * @author maria
  */
 public class DatePickerFormField {
-
     GridPane grid = new GridPane();
     Label nameLabel;
     DatePicker field;
@@ -33,7 +32,6 @@ public class DatePickerFormField {
         field.getEditor().setStyle("-fx-opacity: 1");
         this.isRequired = isRequired;
         errorLabel = new Label("");
-        //grid.setGridLinesVisible(true);
         grid.setPrefSize(width, 30);
         grid.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         grid.setVgap(1);

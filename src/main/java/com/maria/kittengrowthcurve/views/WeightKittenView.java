@@ -45,15 +45,11 @@ public class WeightKittenView {
     }
 
     private void setContentToGridPane() {
-
-        
-
         gridPane.add(new Label(kitten.getKittenName()), 0, 0);
         gridPane.add(weigthField.getNode(), 1, 1);
         gridPane.add(dateField.getNode(), 0, 1);
         gridPane.add(saveResultMessage, 0, 2);
         gridPane.add(saveWeightButton, 2, 1);
-
     }
 
     private void setContentToBorderPane() {

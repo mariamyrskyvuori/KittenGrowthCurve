@@ -6,6 +6,7 @@
 package com.maria.kittengrowthcurve;
 
 import com.maria.kittengrowthcurve.domain.*;
+import com.maria.kittengrowthcurve.service.KittenService;
 import static com.maria.kittengrowthcurve.util.UIUtils.*;
 import com.maria.kittengrowthcurve.views.*;
 import java.time.LocalDate;
@@ -50,7 +51,7 @@ import javafx.scene.text.Text;
  */
 public class UI {
 
-    private KittenService service = new KittenService();
+    private KittenService service = new KittenService("sql/kittenGrowthCurve.db");
     private final Stage stage;
     private int activeLitterId = -1;
     Set<Integer> hiddenKittensIds = new HashSet<Integer>();

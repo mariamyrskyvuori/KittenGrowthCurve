@@ -10,12 +10,10 @@ import com.maria.kittengrowthcurve.formfields.DatePickerFormField;
 import com.maria.kittengrowthcurve.formfields.TextFormField;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 
 /**
  *
@@ -44,7 +42,6 @@ public class AddLitterView {
     }
 
     private void setContentToGridPane() {
-
         gridPane.add(damField.getNode(), 0, 0);
         gridPane.add(sireField.getNode(), 1, 0);
         gridPane.add(nameField.getNode(), 0, 1);

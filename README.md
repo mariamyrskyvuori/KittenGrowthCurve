@@ -37,3 +37,16 @@ Generoi KittenGrowthCurve-1.0-SNAPSHOT.dmg -tiedosto target -hakemistoon
 $ mvn clean package appbundle:bundle
 ```
 Kopioi KittenGrowthCurve.app omalle koneellesi ja suorita se
+
+### Generoi testikattavuusraportti
+```sh
+$ mvn clean package
+$ mvn org.pitest:pitest-maven:mutationCoverage
+```
+Generoi testikattavuusraportin target -hakemistoon
+
+### Generoi tyyliraportti
+```sh
+$ mvn checkstyle:checkstyle
+```
+Generoi tyyliraportin target -hakemistoon

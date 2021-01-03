@@ -10,15 +10,6 @@ Asenna [SQLite](https://sqlite.org/index.html)
 
 Asenna [Maven](https://maven.apache.org/)
 
-Luo tietokanta ja taulut. Sql-skripti on tiedostossa CreateTables.sql
-
-```sh
-$ cd KittenGrowthCurve
-$ cd sql
-$ sqlite3 kittenGrowthCurve.db
-$ sqlite> .read CreateTables.sql
-$ sqlite> .exit
-```
 
 Käynnistä ohjelma
 ```sh

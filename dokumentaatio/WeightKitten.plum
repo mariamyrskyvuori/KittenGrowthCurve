@@ -1,0 +1,61 @@
+@startuml
+skinparam NoteFontName Courier New
+
+Käyttäjä -> Käyttöliittymä: Klikkaa päänäkymässä "Punnitse"
+
+note over Käyttöliittymä
+  UI
+  --
+  getWeightKittenPage(Kitten kitten)
+  <color #dc0000> //Luo näkymän...//</color>
+end note
+
+note over Käyttöliittymä
+  weightKittenView
+  --
+  <color #dc0000> //Näyttää lomakkeen...//</color>
+
+end note
+Käyttäjä -> Käyttöliittymä: Syöttää pennun painon, punnituspäivämäärän ja klikkaa "Tallenna"
+
+Käyttöliittymä -> Service: Pennun painotiedot välitetään eteenpäin
+
+note over Service
+  KittenService
+  --
+  addWeight()
+  <color #dc0000> //Tallentaa pennun tiedot tietokantaan...//</color>
+
+end note
+
+Service -> Tietokanta: Pennun painotiedot tallennetaan tietokantaan
+
+Tietokanta -> Käyttöliittymä: Näytetään käyttäjälle "Paino lisätty!!"
+
+Käyttäjä -> Käyttöliittymä: Klikkaa alanurkassa "Takaisin"
+
+note over Käyttöliittymä
+  getInitialLayout()
+  --
+
+  <color #dc0000> //Luo perusnäkymän...//</color>
+
+end note
+
+
+Käyttöliittymä -> Service: Pyydetään päivitetyt tiedot
+
+note over Service
+  KittenService
+  --
+  getAllDataFromDb()
+  <color #dc0000> //Pyydetään tietokannasta päivitetyt tiedot...//</color>
+
+end note
+
+Service -> Tietokanta: Päivitetyt tiedot haetaan tietokannasta
+
+
+Tietokanta -> Käyttöliittymä: Näytetään käyttäjälle painokäyrä
+
+@enduml

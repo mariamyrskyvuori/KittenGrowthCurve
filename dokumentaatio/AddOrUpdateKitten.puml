@@ -1,0 +1,60 @@
+@startuml
+skinparam NoteFontName Courier New
+
+Käyttäjä -> Käyttöliittymä: Klikkaa päänäkymässä "Tarkastele"
+
+note over Käyttöliittymä
+  UI
+  --
+  getAddOrUpdateKittenPage()
+  <color #dc0000> //Luo näkymän...//</color>
+end note
+
+note over Käyttöliittymä
+  AddOrUpdateKittenView
+  --
+  <color #dc0000> //Näyttää lomakkeen...//</color>
+
+end note
+Käyttäjä -> Käyttöliittymä: Täyttää uuden pennun tiedot ja klikkaa "Tallenna"
+
+Käyttöliittymä -> Service: Uuden pennun tiedot välitetään eteenpäin
+
+note over Service
+  KittenService
+  --
+  addKitten()
+  <color #dc0000> //Tallentaa pennun tiedot tietokantaan...//</color>
+
+end note
+
+Service -> Tietokanta: Uuden pennun tiedot tallennetaan tietokantaan
+
+Tietokanta -> Käyttöliittymä: Näytetään käyttäjälle "Onnistui!"
+
+Käyttäjä -> Käyttöliittymä: Klikkaa pennun kohdalla "Muokkaa"
+
+note over Käyttöliittymä
+  AddOrUpdateKittenView
+  --
+  <color #dc0000> //Näyttää muokattavan pennun tiedot lomakkeella...//</color>
+
+end note
+
+Käyttäjä -> Käyttöliittymä: Muokkaa pennun tietoja ja klikkaa "Tallenna"
+
+Käyttöliittymä -> Service: Muokatun pennun tiedot välitetään eteenpäin
+
+note over Service
+  KittenService
+  --
+  updateKitten()
+  <color #dc0000> //Päivittää pennun tiedot tietokantaan...//</color>
+
+end note
+
+Service -> Tietokanta: Päivitetyn pennun tiedot tallennetaan tietokantaan
+
+Tietokanta -> Käyttöliittymä: Näytetään käyttäjälle "Onnistui!"
+
+@enduml
